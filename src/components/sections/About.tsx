@@ -9,9 +9,9 @@ import { cn } from "@/lib/cn";
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
 const CURRENTLY = [
-  { label: "Building", value: "[CURRENT PROJECT OR FOCUS]" },
-  { label: "Exploring", value: "[TECHNOLOGY OR CONCEPT]" },
-  { label: "Learning", value: "[SKILL OR TOPIC]" },
+  { label: "Building", value: "Web applications" },
+  { label: "Exploring", value: "New technologies and systems" },
+  { label: "Learning", value: "C#, ASP.NET" },
 ] as const;
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -95,24 +95,21 @@ export function About() {
               className="text-lg leading-relaxed"
               style={{ color: "var(--color-text-primary)" }}
             >
-              [SHORT BIO — introduce Shalom: who he is, what drives him,
-              and the kind of work he's drawn to.]
+              I’m a B.Tech (IT) student and full-stack developer who enjoys building software to solve practical problems. I’m interested in understanding how systems work, learning new technologies, and turning what I learn into working applications.
             </p>
             <p
               data-about-reveal
               className="text-base leading-relaxed"
               style={{ color: "var(--color-text-muted)" }}
             >
-              [JOURNEY PARAGRAPH — the path from first line of code to where
-              he is today. Keep honest and concise.]
+              I like going deeper than simply making something work. I want to understand the logic, concepts, and systems behind what I build. When I encounter something difficult, I research it, learn from different sources, put the knowledge into practice, and observe the results.
             </p>
             <p
               data-about-reveal
               className="text-base leading-relaxed"
               style={{ color: "var(--color-text-muted)" }}
             >
-              [PHILOSOPHY PARAGRAPH — how he approaches building:
-              craftsmanship, user empathy, performance, or whatever rings true.]
+              My approach is simple: understand the problem, learn what is required, build the solution, test it, and improve it.
             </p>
           </div>
 
