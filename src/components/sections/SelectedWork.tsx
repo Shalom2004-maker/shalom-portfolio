@@ -126,8 +126,6 @@ export function SelectedWork() {
     return () => observer.disconnect();
   }, [reducedMotion]);
 
-  const [featuredProject, ...secondaryProjects] = PROJECTS;
-
   return (
     <section
       id="work"
@@ -144,16 +142,15 @@ export function SelectedWork() {
         />
       </div>
 
-      {/* Featured project */}
-      <div data-work-reveal className="mb-6">
-        <FeaturedCard project={featuredProject} reducedMotion={reducedMotion} />
-      </div>
-
-      {/* Secondary grid */}
+      {/* 2x2 project grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        {secondaryProjects.map((project, i) => (
+        {PROJECTS.map((project, i) => (
           <div key={project.id} data-work-reveal>
-            <SecondaryCard project={project} index={i} />
+            {i === 0 ? (
+              <FeaturedCard project={project} reducedMotion={reducedMotion} />
+            ) : (
+              <SecondaryCard project={project} index={i} />
+            )}
           </div>
         ))}
       </div>
