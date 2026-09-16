@@ -23,27 +23,40 @@ const CAPABILITY_GROUPS: CapabilityGroup[] = [
   {
     id: "frontend",
     label: "Frontend",
-    items: ["[TECH 01]", "[TECH 02]", "[TECH 03]", "[TECH 04]", "[TECH 05]"],
+    items: [
+      "React",
+      "Next.js",
+      "TypeScript",
+      "JavaScript",
+      "HTML",
+      "CSS",
+      "Tailwind CSS",
+    ],
   },
   {
     id: "backend",
-    label: "Backend",
-    items: ["[TECH 01]", "[TECH 02]", "[TECH 03]", "[TECH 04]"],
+    label: "Backend & Data",
+    items: [
+      "PHP",
+      "Supabase",
+      "PostgreSQL",
+      "PL/pgSQL",
+    ],
   },
   {
-    id: "database",
-    label: "Database",
-    items: ["[TECH 01]", "[TECH 02]", "[TECH 03]"],
+    id: "mobile",
+    label: "Mobile",
+    items: ["Flutter", "Dart"],
   },
   {
     id: "tools",
     label: "Tools",
-    items: ["[TECH 01]", "[TECH 02]", "[TECH 03]", "[TECH 04]"],
+    items: ["Git", "GitHub", "VS Code", "Vercel", "Figma"],
   },
   {
-    id: "design",
-    label: "Design / UI",
-    items: ["[TECH 01]", "[TECH 02]", "[TECH 03]"],
+    id: "learning",
+    label: "Learning / In progress",
+    items: ["C#", "ASP.NET"],
   },
 ];
 
