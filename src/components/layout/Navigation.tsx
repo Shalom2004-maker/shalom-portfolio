@@ -167,7 +167,7 @@ export function Navigation() {
               href="/"
               className="text-sm font-semibold tracking-wide text-[var(--color-text-primary)] hover:text-[var(--color-accent)] transition-colors duration-[var(--duration-base)]"
               style={{ fontFamily: "var(--font-mono)" }}
-              aria-label="Shalom Nadhanlirive — home"
+              aria-label="Shalom Ndahiriwe — home"
             >
               SN
             </a>

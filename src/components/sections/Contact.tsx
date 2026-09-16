@@ -12,32 +12,32 @@ const CONTACT_LINKS = [
   {
     id: "email",
     label: "Email",
-    href: "mailto:[EMAIL]",
-    display: "[EMAIL]",
+    href: "mailto:shalomndahi@gmail.com",
+    display: "shalomndahi@gmail.com",
     icon: Mail,
     external: false,
   },
   {
     id: "github",
     label: "GitHub",
-    href: "https://github.com/[GITHUB_USERNAME]",
-    display: "github.com/[GITHUB_USERNAME]",
+    href: "https://github.com/Shalom2004-maker",
+    display: "github.com/Shalom2004-maker",
     icon: ExternalLink,
     external: true,
   },
   {
     id: "linkedin",
     label: "LinkedIn",
-    href: "https://linkedin.com/in/[LINKEDIN_HANDLE]",
-    display: "linkedin.com/in/[LINKEDIN_HANDLE]",
+    href: "https://www.linkedin.com/in/shalom-ndahiriwe-747944380/",
+    display: "linkedin.com/in/shalom-ndahiriwe",
     icon: ExternalLink,
     external: true,
   },
   {
     id: "resume",
     label: "Resume",
-    href: "/[RESUME_FILE].pdf",
-    display: "Download PDF",
+    href: "#", // Not yet supplied — placeholder
+    display: "Coming soon",
     icon: FileText,
     external: false,
   },
@@ -154,7 +154,7 @@ export function Contact() {
           {/* Primary CTA */}
           <div data-contact-reveal>
             <a
-              href="mailto:[EMAIL]"
+              href="mailto:shalomndahi@gmail.com"
               className={cn(
                 "group inline-flex items-center gap-2.5",
                 "h-12 px-8 rounded-full",

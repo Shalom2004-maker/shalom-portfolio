@@ -12,9 +12,9 @@ const FOOTER_LINKS = [
 ] as const;
 
 const SOCIAL_LINKS = [
-  { label: "GitHub", href: "https://github.com/[GITHUB_USERNAME]" },
-  { label: "LinkedIn", href: "https://linkedin.com/in/[LINKEDIN_HANDLE]" },
-  { label: "Email", href: "mailto:[EMAIL]" },
+  { label: "GitHub", href: "https://github.com/Shalom2004-maker" },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/shalom-ndahiriwe-747944380/" },
+  { label: "Email", href: "mailto:shalomndahi@gmail.com" },
 ] as const;
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -53,7 +53,7 @@ export function Footer() {
               href="/"
               className="text-sm font-semibold tracking-wide text-[var(--color-text-primary)] hover:text-[var(--color-accent)] transition-colors duration-[var(--duration-base)]"
               style={{ fontFamily: "var(--font-mono)" }}
-              aria-label="Shalom Nadhanlirive — home"
+              aria-label="Shalom Ndahiriwe — home"
             >
               SN
             </a>
@@ -141,7 +141,7 @@ export function Footer() {
               color: "var(--color-text-muted)",
             }}
           >
-            © {year} Shalom Nadhanlirive. All rights reserved.
+            © {year} Shalom Ndahiriwe. All rights reserved.
           </p>
 
           <a

@@ -128,7 +128,7 @@ export function MoreWork() {
         {/* CTA */}
         <div data-more-reveal className="relative shrink-0">
           <a
-            href="https://github.com/[GITHUB_USERNAME]"
+            href="https://github.com/Shalom2004-maker"
             target="_blank"
             rel="noopener noreferrer"
             className={cn(
