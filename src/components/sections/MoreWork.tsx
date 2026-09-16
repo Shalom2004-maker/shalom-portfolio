@@ -61,7 +61,18 @@ export function MoreWork() {
     );
 
     observer.observe(sectionRef.current);
-    return () => observer.disconnect();
+
+    const fallback = window.setTimeout(() => {
+      const targetsNow = Array.from(sectionRef.current?.querySelectorAll<HTMLElement>("[data-more-reveal]") ?? []);
+      targetsNow.forEach((el) => {
+        if (el.style.opacity === "0") {
+          el.style.opacity = "1";
+          el.style.transform = "none";
+        }
+      });
+    }, 1200);
+
+    return () => { clearTimeout(fallback); observer.disconnect(); };
   }, [reducedMotion]);
 
   return (

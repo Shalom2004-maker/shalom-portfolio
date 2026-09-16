@@ -123,7 +123,21 @@ export function SelectedWork() {
     );
 
     observer.observe(sectionRef.current);
-    return () => observer.disconnect();
+
+    // Failsafe: ensure reveals are visible after 1.2s in case animation hangs
+    const fallback = window.setTimeout(() => {
+      targets.forEach((el) => {
+        if (el.style.opacity === "0") {
+          el.style.opacity = "1";
+          el.style.transform = "none";
+        }
+      });
+    }, 1200);
+
+    return () => {
+      clearTimeout(fallback);
+      observer.disconnect();
+    };
   }, [reducedMotion]);
 
   return (

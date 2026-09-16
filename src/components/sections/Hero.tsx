@@ -43,6 +43,7 @@ export function Hero() {
 
     let tl: any = undefined;
     let splitter: any = undefined;
+    let fallback: number | undefined = undefined;
 
     try {
       // Split the name heading into individual words with clip overflow
@@ -91,6 +92,27 @@ export function Hero() {
       if (panel) {
         tl.add(panel, { opacity: [0, 1], translateX: [20, 0], duration: 500 }, 900);
       }
+
+      // Failsafe: ensure reveal doesn't remain hidden if timeline fails to start
+      fallback = window.setTimeout(() => {
+        const restEls = Array.from(section.querySelectorAll<HTMLElement>("[data-hero-reveal]"));
+        restEls.forEach((el) => {
+          if (el.style.opacity === "0") {
+            el.style.opacity = "1";
+            el.style.transform = "none";
+          }
+        });
+        const panelEl = section.querySelector<HTMLElement>("[data-hero-panel]");
+        if (panelEl && panelEl.style.opacity === "0") {
+          panelEl.style.opacity = "1";
+          panelEl.style.transform = "none";
+        }
+        const labelEl = section.querySelector<HTMLElement>("[data-hero-label]");
+        if (labelEl && labelEl.style.opacity === "0") {
+          labelEl.style.opacity = "1";
+          labelEl.style.transform = "none";
+        }
+      }, 1200);
     } catch (err) {
       // If animation setup fails, restore visible state to avoid hiding content
       // eslint-disable-next-line no-console
@@ -110,6 +132,7 @@ export function Hero() {
     return () => {
       if (tl && typeof tl.revert === "function") tl.revert();
       if (splitter && typeof splitter.revert === "function") splitter.revert();
+      if (fallback) clearTimeout(fallback);
     };
   }, [reducedMotion]);
 

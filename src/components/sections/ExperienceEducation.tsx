@@ -156,7 +156,17 @@ export function ExperienceEducation() {
     );
 
     observer.observe(sectionRef.current);
-    return () => observer.disconnect();
+
+    const fallback = window.setTimeout(() => {
+      const lineNow = lineRef.current;
+      if (lineNow && lineNow.style.transform === "scaleY(0)") lineNow.style.transform = "none";
+      const nodesNow = Array.from(sectionRef.current?.querySelectorAll<HTMLElement>("[data-tl-node]") ?? []);
+      nodesNow.forEach((n) => { if (n.style.opacity === "0") { n.style.opacity = "1"; n.style.transform = "none"; } });
+      const cardsNow = Array.from(sectionRef.current?.querySelectorAll<HTMLElement>("[data-tl-card]") ?? []);
+      cardsNow.forEach((c) => { if (c.style.opacity === "0") { c.style.opacity = "1"; c.style.transform = "none"; } });
+    }, 1200);
+
+    return () => { clearTimeout(fallback); observer.disconnect(); };
   }, [reducedMotion]);
 
   return (
