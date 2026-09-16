@@ -34,6 +34,8 @@ export function Hero() {
   const reducedMotion = useReducedMotion();
   const sectionRef    = useRef<HTMLElement>(null);
   const nameRef       = useRef<HTMLHeadingElement>(null);
+  // Tagline text used by the typewriter; keep as source-of-truth string
+  const tagline = "I BUILD WEB EXPERIENCES.";
 
   // Lightweight splitText replacement — wraps words in clip containers and returns a revert() function
   function splitWords(el: HTMLElement) {
@@ -203,7 +205,48 @@ export function Hero() {
           className={cn("text-[clamp(1rem,2.5vw,1.5rem)]", "font-medium tracking-wide mb-6")}
           style={{ fontFamily: "var(--font-display)", color: "var(--color-text-muted)" }}
         >
-          I BUILD WEB EXPERIENCES.
+          {reducedMotion ? (
+            // Respect reduced motion: render plain text
+            tagline
+          ) : (
+            <>
+              {/* Visible typing animation (CSS-only). The full text is also provided to screen readers via sr-only. */}
+              <span
+                aria-hidden="true"
+                className="typewriter"
+                data-typewriter
+                // Pass character count to the CSS animation steps via a CSS variable
+                style={{ ["--characters" as any]: String(tagline.length) }}
+              >
+                {tagline}
+              </span>
+              <span className="sr-only">{tagline}</span>
+
+              {/* Scoped CSS for the typewriter effect (non-looping, lightweight). */}
+              <style>{`
+                .typewriter {
+                  display:inline-block;
+                  white-space:nowrap;
+                  overflow:hidden;
+                  border-right: 2px solid var(--color-accent);
+                  /* animate typing once (forwards) and keep caret blinking */
+                  animation: typing 2200ms steps(var(--characters), end) forwards, blink 700ms step-end infinite;
+                }
+                @keyframes typing {
+                  from { width: 0; }
+                  to   { width: 100%; }
+                }
+                @keyframes blink {
+                  from, to { border-color: transparent; }
+                  50% { border-color: var(--color-accent); }
+                }
+                /* Prefer reduced motion fallback */
+                @media (prefers-reduced-motion: reduce) {
+                  .typewriter { animation: none; border-right: none; width: auto; }
+                }
+              `}</style>
+            </>
+          )}
         </p>
 
         {/* Intro copy */}
