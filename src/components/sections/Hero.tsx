@@ -3,7 +3,6 @@
 import { useEffect, useRef } from "react";
 import { ArrowRight, GitBranch } from "lucide-react";
 import { animate, createTimeline, stagger } from "animejs";
-import { split } from "animejs/text";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { cn } from "@/lib/cn";
 
