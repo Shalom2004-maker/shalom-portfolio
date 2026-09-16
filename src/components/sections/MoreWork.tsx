@@ -24,27 +24,36 @@ export function MoreWork() {
   useEffect(() => {
     if (reducedMotion || !sectionRef.current) return;
 
-    const targets = Array.from(
-      sectionRef.current.querySelectorAll<HTMLElement>("[data-more-reveal]")
-    );
+    const targets = Array.from(sectionRef.current.querySelectorAll<HTMLElement>("[data-more-reveal]"));
 
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && !hasAnimated.current) {
           hasAnimated.current = true;
-          targets.forEach((el) => {
-            el.style.opacity = "0";
-            el.style.transform = "translateY(20px)";
-          });
-          requestAnimationFrame(() => {
-            animate(targets, {
-              opacity: [0, 1],
-              translateY: [20, 0],
-              duration: 600,
-              delay: (_, i) => (i ?? 0) * 100,
-              ease: "outCubic",
+          try {
+            targets.forEach((el) => {
+              el.style.opacity = "0";
+              el.style.transform = "translateY(20px)";
             });
-          });
+            requestAnimationFrame(() => {
+              animate(targets, {
+                opacity: [0, 1],
+                translateY: [20, 0],
+                duration: 600,
+                delay: (_, i) => (i ?? 0) * 100,
+                ease: "outCubic",
+              });
+            });
+          } catch (err) {
+            // Restore on error
+            // eslint-disable-next-line no-console
+            console.error("MoreWork animation failed:", err);
+            targets.forEach((el) => {
+              el.style.opacity = "1";
+              el.style.transform = "none";
+            });
+          }
+
           observer.disconnect();
         }
       },

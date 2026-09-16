@@ -33,9 +33,7 @@ export function About() {
   useEffect(() => {
     if (reducedMotion || !sectionRef.current) return;
 
-    const targets = Array.from(
-      sectionRef.current.querySelectorAll<HTMLElement>("[data-about-reveal]")
-    );
+    const targets = Array.from(sectionRef.current.querySelectorAll<HTMLElement>("[data-about-reveal]"));
 
     if (!targets.length) return;
 
@@ -43,19 +41,30 @@ export function About() {
       (entries) => {
         if (entries[0].isIntersecting && !hasAnimated.current) {
           hasAnimated.current = true;
-          targets.forEach((el) => {
-            el.style.opacity = "0";
-            el.style.transform = "translateY(28px)";
-          });
-          requestAnimationFrame(() => {
-            animate(targets, {
-              opacity: [0, 1],
-              translateY: [28, 0],
-              duration: 650,
-              delay: stagger(90),
-              ease: "outCubic",
+          try {
+            targets.forEach((el) => {
+              el.style.opacity = "0";
+              el.style.transform = "translateY(28px)";
             });
-          });
+            requestAnimationFrame(() => {
+              animate(targets, {
+                opacity: [0, 1],
+                translateY: [28, 0],
+                duration: 650,
+                delay: stagger(90),
+                ease: "outCubic",
+              });
+            });
+          } catch (err) {
+            // Restore if animation setup fails
+            // eslint-disable-next-line no-console
+            console.error("About animation failed:", err);
+            targets.forEach((el) => {
+              el.style.opacity = "1";
+              el.style.transform = "none";
+            });
+          }
+
           observer.disconnect();
         }
       },

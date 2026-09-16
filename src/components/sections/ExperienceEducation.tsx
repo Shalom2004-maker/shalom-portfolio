@@ -85,12 +85,8 @@ export function ExperienceEducation() {
     if (reducedMotion || !sectionRef.current) return;
 
     const line = lineRef.current;
-    const nodes = Array.from(
-      sectionRef.current.querySelectorAll<HTMLElement>("[data-tl-node]")
-    );
-    const cards = Array.from(
-      sectionRef.current.querySelectorAll<HTMLElement>("[data-tl-card]")
-    );
+    const nodes = Array.from(sectionRef.current.querySelectorAll<HTMLElement>("[data-tl-node]"));
+    const cards = Array.from(sectionRef.current.querySelectorAll<HTMLElement>("[data-tl-card]"));
 
     if (!line) return;
 
@@ -99,44 +95,59 @@ export function ExperienceEducation() {
         if (entries[0].isIntersecting && !hasAnimated.current) {
           hasAnimated.current = true;
 
-          // Set initial states right before animating
-          line.style.transform = "scaleY(0)";
-          line.style.transformOrigin = "top";
-          nodes.forEach((n) => {
-            n.style.opacity = "0";
-            n.style.transform = "scale(0)";
-          });
-          cards.forEach((c) => {
-            c.style.opacity = "0";
-            c.style.transform = "translateX(-16px)";
-          });
-
-          requestAnimationFrame(() => {
-            // 1. Line grows
-            animate(line, {
-              scaleY: [0, 1],
-              duration: 900,
-              ease: "outCubic",
-              onComplete: () => {
-                // 2. Nodes activate
-                animate(nodes, {
-                  opacity: [0, 1],
-                  scale: [0, 1],
-                  duration: 300,
-                  delay: (_, i) => (i ?? 0) * 150,
-                  ease: "outBack(1.5)",
-                });
-                // 3. Cards slide in
-                animate(cards, {
-                  opacity: [0, 1],
-                  translateX: [-16, 0],
-                  duration: 450,
-                  delay: (_, i) => 150 + (i ?? 0) * 120,
-                  ease: "outCubic",
-                });
-              },
+          try {
+            // Set initial states right before animating
+            line.style.transform = "scaleY(0)";
+            line.style.transformOrigin = "top";
+            nodes.forEach((n) => {
+              n.style.opacity = "0";
+              n.style.transform = "scale(0)";
             });
-          });
+            cards.forEach((c) => {
+              c.style.opacity = "0";
+              c.style.transform = "translateX(-16px)";
+            });
+
+            requestAnimationFrame(() => {
+              // 1. Line grows
+              animate(line, {
+                scaleY: [0, 1],
+                duration: 900,
+                ease: "outCubic",
+                onComplete: () => {
+                  // 2. Nodes activate
+                  animate(nodes, {
+                    opacity: [0, 1],
+                    scale: [0, 1],
+                    duration: 300,
+                    delay: (_, i) => (i ?? 0) * 150,
+                    ease: "outBack(1.5)",
+                  });
+                  // 3. Cards slide in
+                  animate(cards, {
+                    opacity: [0, 1],
+                    translateX: [-16, 0],
+                    duration: 450,
+                    delay: (_, i) => 150 + (i ?? 0) * 120,
+                    ease: "outCubic",
+                  });
+                },
+              });
+            });
+          } catch (err) {
+            // Restore if animation setup fails
+            // eslint-disable-next-line no-console
+            console.error("Experience/Education animation failed:", err);
+            line.style.transform = "none";
+            nodes.forEach((n) => {
+              n.style.opacity = "1";
+              n.style.transform = "none";
+            });
+            cards.forEach((c) => {
+              c.style.opacity = "1";
+              c.style.transform = "none";
+            });
+          }
 
           observer.disconnect();
         }

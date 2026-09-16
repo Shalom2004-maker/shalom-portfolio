@@ -11,8 +11,8 @@ import { cn } from "@/lib/cn";
 
 const STATUS_ITEMS = [
   { label: "SYSTEM STATUS", value: "ONLINE" },
-  { label: "AVAILABILITY",  value: "AVAILABLE" },
-  { label: "ROLE",          value: "WEB DEVELOPER" },
+  { label: "AVAILABILITY",  value: "FOR OPPORTUNITIES" },
+  { label: "ROLE",          value: "FULL-STACK DEV" },
   { label: "FOCUS",         value: "WEB APPLICATIONS" },
   { label: "BUILD",         value: "2026.09" },
 ] as const;
@@ -40,71 +40,77 @@ export function Hero() {
     if (reducedMotion || !sectionRef.current || !nameRef.current) return;
 
     const section = sectionRef.current;
-    const nameEl  = nameRef.current;
+    const nameEl = nameRef.current;
 
-    // Split the name heading into individual words with clip overflow
-    // words: { wrap: "clip" } wraps each word in a clipping container
-    // so words can slide up from below the clip boundary
-    const splitter = split(nameEl, {
-      words: { wrap: "clip" },
-    });
+    let tl: any = undefined;
+    let splitter: any = undefined;
 
-    // The inner word spans are the direct children of each clip wrapper
-    const wordInners = Array.from(
-      nameEl.querySelectorAll<HTMLElement>("[data-word]")
-    );
+    try {
+      // Split the name heading into individual words with clip overflow
+      splitter = split(nameEl, { words: { wrap: "clip" } });
 
-    // Fallback: if split() doesn't produce [data-word] elements,
-    // target all direct span children
-    const animTargets = wordInners.length
-      ? wordInners
-      : Array.from(nameEl.querySelectorAll<HTMLElement>("span span"));
+      // The inner word spans are the direct children of each clip wrapper
+      const wordInners = Array.from(nameEl.querySelectorAll<HTMLElement>("[data-word]"));
+      const animTargets = wordInners.length
+        ? wordInners
+        : Array.from(nameEl.querySelectorAll<HTMLElement>("span span"));
 
-    // Elements to animate (everything except the name, which is handled separately)
-    const rest = Array.from(
-      section.querySelectorAll<HTMLElement>("[data-hero-reveal]")
-    );
-    const panel = section.querySelector<HTMLElement>("[data-hero-panel]");
+      // Elements to animate (everything except the name, which is handled separately)
+      const rest = Array.from(section.querySelectorAll<HTMLElement>("[data-hero-reveal]"));
+      const panel = section.querySelector<HTMLElement>("[data-hero-panel]");
 
-    // Set initial states
-    rest.forEach((el) => { el.style.opacity = "0"; el.style.transform = "translateY(20px)"; });
-    if (panel) { panel.style.opacity = "0"; panel.style.transform = "translateX(20px)"; }
+      // Set initial states
+      rest.forEach((el) => {
+        el.style.opacity = "0";
+        el.style.transform = "translateY(20px)";
+      });
+      if (panel) {
+        panel.style.opacity = "0";
+        panel.style.transform = "translateX(20px)";
+      }
 
-    const tl = createTimeline({ defaults: { ease: "outCubic" } });
+      tl = createTimeline({ defaults: { ease: "outCubic" } });
 
-    // 1. Index label
-    const label = section.querySelector<HTMLElement>("[data-hero-label]");
-    if (label) {
-      label.style.opacity = "0";
-      tl.add(label, { opacity: [0, 1], translateY: [-10, 0], duration: 400 }, 150);
-    }
+      // 1. Index label
+      const label = section.querySelector<HTMLElement>("[data-hero-label]");
+      if (label) {
+        label.style.opacity = "0";
+        tl.add(label, { opacity: [0, 1], translateY: [-10, 0], duration: 400 }, 150);
+      }
 
-    // 2. Name — word-by-word clip up
-    if (animTargets.length) {
-      tl.add(
-        animTargets,
-        {
-          translateY: ["110%", "0%"],
-          duration: 600,
-          delay: stagger(60, { start: 0 }),
-        },
-        300
-      );
-    }
+      // 2. Name — word-by-word clip up
+      if (animTargets.length) {
+        tl.add(animTargets, { translateY: ["110%", "0%"], duration: 600, delay: stagger(60, { start: 0 }) }, 300);
+      }
 
-    // 3. Rest of hero content
-    rest.forEach((el, i) => {
-      tl.add(el, { opacity: [0, 1], translateY: [20, 0], duration: 500 }, 600 + i * 90);
-    });
+      // 3. Rest of hero content
+      rest.forEach((el, i) => {
+        tl.add(el, { opacity: [0, 1], translateY: [20, 0], duration: 500 }, 600 + i * 90);
+      });
 
-    // 4. Status panel
-    if (panel) {
-      tl.add(panel, { opacity: [0, 1], translateX: [20, 0], duration: 500 }, 900);
+      // 4. Status panel
+      if (panel) {
+        tl.add(panel, { opacity: [0, 1], translateX: [20, 0], duration: 500 }, 900);
+      }
+    } catch (err) {
+      // If animation setup fails, restore visible state to avoid hiding content
+      // eslint-disable-next-line no-console
+      console.error("Hero animation failed:", err);
+      const rest = Array.from(section.querySelectorAll<HTMLElement>("[data-hero-reveal]"));
+      rest.forEach((el) => {
+        el.style.opacity = "1";
+        el.style.transform = "none";
+      });
+      const panel = section.querySelector<HTMLElement>("[data-hero-panel]");
+      if (panel) {
+        panel.style.opacity = "1";
+        panel.style.transform = "none";
+      }
     }
 
     return () => {
-      tl.revert();
-      splitter.revert();
+      if (tl && typeof tl.revert === "function") tl.revert();
+      if (splitter && typeof splitter.revert === "function") splitter.revert();
     };
   }, [reducedMotion]);
 
@@ -142,7 +148,7 @@ export function Hero() {
           )}
           style={{ fontFamily: "var(--font-display)", color: "var(--color-text-primary)" }}
         >
-          SHALOM NADHANLIRIVE
+          SHALOM NDAHIRIWE
         </h1>
 
         {/* Tagline */}
@@ -151,7 +157,7 @@ export function Hero() {
           className={cn("text-[clamp(1rem,2.5vw,1.5rem)]", "font-medium tracking-wide mb-6")}
           style={{ fontFamily: "var(--font-display)", color: "var(--color-text-muted)" }}
         >
-          I BUILD DIGITAL EXPERIENCES.
+          I BUILD WEB EXPERIENCES.
         </p>
 
         {/* Intro copy */}
@@ -160,13 +166,15 @@ export function Hero() {
           className="max-w-lg text-base leading-relaxed mb-10"
           style={{ color: "var(--color-text-muted)" }}
         >
-          [SHORT INTRO]
+          I&apos;m a web developer who builds thoughtful, functional web applications
+          with modern technologies, clean interfaces, and attention to the details
+          that make software feel complete.
         </p>
 
         {/* CTAs */}
         <div data-hero-reveal className="flex flex-wrap items-center gap-4">
           <HeroCTA href="#work" primary>Explore Work</HeroCTA>
-          <HeroCTA href="https://github.com" external>
+          <HeroCTA href="https://github.com/Shalom2004-maker" external>
             <GitBranch className="w-4 h-4" aria-hidden="true" />
             GitHub
           </HeroCTA>

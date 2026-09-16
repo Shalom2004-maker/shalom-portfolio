@@ -83,9 +83,7 @@ export function SelectedWork() {
   useEffect(() => {
     if (reducedMotion || !sectionRef.current) return;
 
-    const targets = Array.from(
-      sectionRef.current.querySelectorAll<HTMLElement>("[data-work-reveal]")
-    );
+    const targets = Array.from(sectionRef.current.querySelectorAll<HTMLElement>("[data-work-reveal]"));
 
     if (!targets.length) return;
 
@@ -93,20 +91,31 @@ export function SelectedWork() {
       (entries) => {
         if (entries[0].isIntersecting && !hasAnimated.current) {
           hasAnimated.current = true;
-          // Hide then animate — only when we know the section is in view
-          targets.forEach((el) => {
-            el.style.opacity = "0";
-            el.style.transform = "translateY(32px)";
-          });
-          requestAnimationFrame(() => {
-            animate(targets, {
-              opacity: [0, 1],
-              translateY: [32, 0],
-              duration: 700,
-              delay: stagger(100, { start: 0 }),
-              ease: "outCubic",
+          try {
+            // Hide then animate — only when we know the section is in view
+            targets.forEach((el) => {
+              el.style.opacity = "0";
+              el.style.transform = "translateY(32px)";
             });
-          });
+            requestAnimationFrame(() => {
+              animate(targets, {
+                opacity: [0, 1],
+                translateY: [32, 0],
+                duration: 700,
+                delay: stagger(100, { start: 0 }),
+                ease: "outCubic",
+              });
+            });
+          } catch (err) {
+            // restore on error
+            // eslint-disable-next-line no-console
+            console.error("SelectedWork animation failed:", err);
+            targets.forEach((el) => {
+              el.style.opacity = "1";
+              el.style.transform = "none";
+            });
+          }
+
           observer.disconnect();
         }
       },
