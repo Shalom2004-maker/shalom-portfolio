@@ -1,3 +1,5 @@
+"use client";
+import { useEffect, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/cn";
 
@@ -32,7 +34,11 @@ const SOCIAL_LINKS = [
  * Server component — no interactivity required.
  */
 export function Footer() {
-  const year = new Date().getFullYear();
+  const [year, setYear] = useState<number | null>(null);
+
+  useEffect(() => {
+    setYear(new Date().getFullYear());
+  }, []);
 
   return (
     <footer
