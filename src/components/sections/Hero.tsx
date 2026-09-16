@@ -229,8 +229,8 @@ export function Hero() {
                   white-space:nowrap;
                   overflow:hidden;
                   border-right: 2px solid var(--color-accent);
-                  /* animate typing once (forwards) and keep caret blinking */
-                  animation: typing 2200ms steps(var(--characters), end) forwards, blink 700ms step-end infinite;
+                  /* animate typing once (forwards). Blink runs during typing, then caretEnd hides it. */
+                  animation: typing 2200ms steps(var(--characters), end) forwards, blink 700ms step-end infinite, caretEnd 1ms linear 2200ms forwards;
                 }
                 @keyframes typing {
                   from { width: 0; }
@@ -239,6 +239,10 @@ export function Hero() {
                 @keyframes blink {
                   from, to { border-color: transparent; }
                   50% { border-color: var(--color-accent); }
+                }
+                /* After typing completes, caretEnd sets the border-color to transparent to stop blinking */
+                @keyframes caretEnd {
+                  to { border-color: transparent; }
                 }
                 /* Prefer reduced motion fallback */
                 @media (prefers-reduced-motion: reduce) {
