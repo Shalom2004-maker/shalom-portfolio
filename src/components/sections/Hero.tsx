@@ -62,7 +62,11 @@ export function Hero() {
   }
 
   useEffect(() => {
-    if (reducedMotion || !sectionRef.current || !nameRef.current) return;
+    console.debug("Hero.useEffect start", { reducedMotion, hasSection: !!sectionRef.current, hasName: !!nameRef.current });
+    if (reducedMotion || !sectionRef.current || !nameRef.current) {
+      console.debug("Hero.useEffect early exit", { reducedMotion });
+      return;
+    }
 
     const section = sectionRef.current;
     const nameEl = nameRef.current;
@@ -73,6 +77,7 @@ export function Hero() {
 
     try {
       // Split the name heading into individual words with clip overflow
+      console.debug("Hero: running splitWords on nameEl");
       splitter = splitWords(nameEl);
 
       // The inner word spans are the direct children of each clip wrapper
@@ -94,6 +99,7 @@ export function Hero() {
         panel.style.opacity = "0";
         panel.style.transform = "translateX(20px)";
       }
+      console.debug("Hero: initial styles applied", { restCount: rest.length, hasPanel: !!panel });
 
       tl = createTimeline({ defaults: { ease: "outCubic" } });
 
@@ -121,6 +127,7 @@ export function Hero() {
 
       // Failsafe: ensure reveal doesn't remain hidden if timeline fails to start
       fallback = window.setTimeout(() => {
+        console.debug("Hero: fallback fired — forcing visible state");
         const restEls = Array.from(section.querySelectorAll<HTMLElement>("[data-hero-reveal]"));
         restEls.forEach((el) => {
           if (el.style.opacity === "0") {
