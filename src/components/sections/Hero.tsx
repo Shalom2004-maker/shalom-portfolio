@@ -35,6 +35,30 @@ export function Hero() {
   const sectionRef    = useRef<HTMLElement>(null);
   const nameRef       = useRef<HTMLHeadingElement>(null);
 
+  // Lightweight splitText replacement — wraps words in clip containers and returns a revert() function
+  function splitWords(el: HTMLElement) {
+    const original = el.innerHTML;
+    const text = el.textContent ?? "";
+    // Split on spaces but keep consecutive spaces
+    const words = text.split(/(\s+)/).filter(Boolean);
+
+    const frag = words
+      .map((w) => {
+        if (/^\s+$/.test(w)) return w.replace(/ /g, "\u00A0");
+        const safe = w.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        return `<span data-word style=\"display:inline-block;overflow:hidden\"><span style=\"display:inline-block\">${safe}</span></span>`;
+      })
+      .join("");
+
+    el.innerHTML = frag;
+
+    return {
+      revert() {
+        el.innerHTML = original;
+      },
+    };
+  }
+
   useEffect(() => {
     if (reducedMotion || !sectionRef.current || !nameRef.current) return;
 
@@ -47,7 +71,7 @@ export function Hero() {
 
     try {
       // Split the name heading into individual words with clip overflow
-      splitter = split(nameEl, { words: { wrap: "clip" } });
+      splitter = splitWords(nameEl);
 
       // The inner word spans are the direct children of each clip wrapper
       const wordInners = Array.from(nameEl.querySelectorAll<HTMLElement>("[data-word]"));
