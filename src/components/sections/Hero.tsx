@@ -75,7 +75,20 @@ export function Hero() {
     let splitter: any = undefined;
     let fallback: number | undefined = undefined;
 
+    // Ensure hero content is immediately visible to avoid flash/hide while animations initialize
+    // This avoids leaving elements hidden if animation setup fails or is delayed.
     try {
+      const immediate = Array.from(section.querySelectorAll<HTMLElement>("[data-hero-reveal]"));
+      immediate.forEach((el) => {
+        el.style.opacity = "1";
+        el.style.transform = "none";
+      });
+      const immediatePanel = section.querySelector<HTMLElement>("[data-hero-panel]");
+      if (immediatePanel) {
+        immediatePanel.style.opacity = "1";
+        immediatePanel.style.transform = "none";
+      }
+
       // Split the name heading into individual words with clip overflow
       console.debug("Hero: running splitWords on nameEl");
       splitter = splitWords(nameEl);
@@ -90,19 +103,11 @@ export function Hero() {
       const rest = Array.from(section.querySelectorAll<HTMLElement>("[data-hero-reveal]"));
       const panel = section.querySelector<HTMLElement>("[data-hero-panel]");
 
-      // Set initial states
-      rest.forEach((el) => {
-        el.style.opacity = "0";
-        el.style.transform = "translateY(20px)";
-      });
-      if (panel) {
-        panel.style.opacity = "0";
-        panel.style.transform = "translateX(20px)";
-      }
-      console.debug("Hero: initial styles applied", { restCount: rest.length, hasPanel: !!panel });
+      // NOTE: Do NOT forcibly hide elements here — we want them visible immediately.
+
+      console.debug("Hero: initial styles ensured visible", { restCount: rest.length, hasPanel: !!panel });
 
       tl = createTimeline({ defaults: { ease: "outCubic" } });
-
       // 1. Index label
       const label = section.querySelector<HTMLElement>("[data-hero-label]");
       if (label) {
