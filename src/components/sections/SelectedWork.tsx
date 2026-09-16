@@ -23,28 +23,40 @@ interface Project {
 const PROJECTS: Project[] = [
   {
     id: "p01",
-    name: "[PROJECT NAME 01]",
-    description: "[VALUE PROPOSITION — what the project does and why it matters]",
-    tags: ["[TECH 01]", "[TECH 02]", "[TECH 03]"],
-    demoUrl: "#",
-    repoUrl: "#",
+    name: "LetChat",
+    description:
+      "Real-time messaging platform (work in progress). Email-confirm authentication and Supabase-backed real-time chat with typing indicators, read receipts, and document sharing.",
+    tags: ["TypeScript", "Supabase"],
+    demoUrl: "https://glide-talk-platform.vercel.app/login",
+    repoUrl: "https://github.com/Shalom2004-maker/glide-talk-platform",
     featured: true,
   },
   {
     id: "p02",
-    name: "[PROJECT NAME 02]",
-    description: "[VALUE PROPOSITION]",
-    tags: ["[TECH 01]", "[TECH 02]"],
-    demoUrl: "#",
-    repoUrl: "#",
+    name: "ParkEase",
+    description:
+      "Smart parking platform (development). Slot discovery and reservation flow with mocked payment simulation; emphasis on booking and availability state management to avoid double-booking.",
+    tags: ["Flutter", "Dart", "Supabase"],
+    demoUrl: "https://github.com/Shalom2004-maker/park_ease",
+    repoUrl: "https://github.com/Shalom2004-maker/park_ease",
   },
   {
     id: "p03",
-    name: "[PROJECT NAME 03]",
-    description: "[VALUE PROPOSITION]",
-    tags: ["[TECH 01]", "[TECH 02]"],
-    demoUrl: "#",
-    repoUrl: "#",
+    name: "Paradise Glass Hotel",
+    description:
+      "Hotel management interface exploring glassmorphism and role-based access. Authentication, admin/guest areas, and responsive UI are implemented; bookings are requests and there is no payment provider.",
+    tags: ["React", "TypeScript", "Tailwind CSS"],
+    demoUrl: "https://github.com/Shalom2004-maker/paradise-glass-hotel",
+    repoUrl: "https://github.com/Shalom2004-maker/paradise-glass-hotel",
+  },
+  {
+    id: "p04",
+    name: "NexGen Solution",
+    description:
+      "Practice employee management system built as a university project. Role-based access, task and leave workflows implemented with a PHP/MySQL backend; not an enterprise HR product.",
+    tags: ["PHP", "MySQL", "HTML/CSS"],
+    demoUrl: "https://github.com/Shalom2004-maker/NexGen-Solution",
+    repoUrl: "https://github.com/Shalom2004-maker/NexGen-Solution",
   },
 ];
 
