@@ -21,32 +21,46 @@ const TIMELINE: TimelineEntry[] = [
   {
     id: "e1",
     type: "work",
-    date: "[YEAR – PRESENT]",
-    organization: "[ORGANIZATION NAME]",
-    role: "[ROLE / TITLE]",
+    date: "2022 (approx Apr–May)",
+    organization: "UR‑CAVM, Rwanda",
+    role: "Intern — PHP & CMS Development",
     outcomes: [
-      "[KEY OUTCOME OR RESPONSIBILITY]",
-      "[KEY OUTCOME OR RESPONSIBILITY]",
+      "Practical exposure to PHP and CMS-based web development (Drupal, WordPress, Joomla, Wix)",
+      "Worked on CMS integrations, content workflows, and site maintenance",
+      "Known supervisors: RUKUNDO Emile, Benoit, Munezero (one assistant name not supplied)"
     ],
   },
   {
     id: "e2",
     type: "work",
-    date: "[YEAR – YEAR]",
-    organization: "[ORGANIZATION NAME]",
-    role: "[ROLE / TITLE]",
+    date: "2023 (approx May–June)",
+    organization: "UR‑CAVM, Rwanda",
+    role: "Intern — PHP & CMS Development",
     outcomes: [
-      "[KEY OUTCOME OR RESPONSIBILITY]",
-      "[KEY OUTCOME OR RESPONSIBILITY]",
+      "Further PHP and CMS development experience across multiple CMS platforms",
+      "Contributed to site updates, debugging, and feature fixes",
+      "Exact internship dates and one supervisor name remain to be verified"
     ],
   },
   {
     id: "e3",
+    type: "work",
+    date: "2023 – Present",
+    organization: "Independent / Personal projects",
+    role: "Independent Web Developer",
+    outcomes: [
+      "Building web applications and practical projects to learn new technologies",
+      "Researching difficult concepts and testing ideas through implementation",
+      "No formal full-time employment — work is project and practice based"
+    ],
+  },
+  {
+    id: "e4",
     type: "education",
-    date: "[YEAR – YEAR]",
-    organization: "[INSTITUTION NAME]",
-    role: "[DEGREE / PROGRAMME]",
-    outcomes: ["[NOTABLE ACHIEVEMENT OR FOCUS AREA]"],
+    date: "Expected 2024–2028",
+    organization: "RK University, Rajkot, Gujarat",
+    role: "B.Tech (IT)",
+    outcomes: ["Enrollment/start year to be verified before publishing"],
   },
 ];
 
