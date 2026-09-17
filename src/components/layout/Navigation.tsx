@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { animate, createTimeline } from "animejs";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
@@ -11,6 +12,7 @@ import { cn } from "@/lib/cn";
 const NAV_LINKS = [
   { label: "Work",    href: "#work",    sectionId: "work" },
   { label: "About",   href: "#about",   sectionId: "about" },
+  { label: "Capabilities", href: "#capabilities", sectionId: "capabilities" },
   { label: "Contact", href: "#contact", sectionId: "contact" },
 ] as const;
 
@@ -162,15 +164,15 @@ export function Navigation() {
 
           {/* LEFT — wordmark */}
           <div className="flex-1 flex items-center">
-            <a
+            <Link
               ref={wordmarkRef}
               href="/"
-              className="text-sm font-semibold tracking-wide text-[var(--color-text-primary)] hover:text-[var(--color-accent)] transition-colors duration-[var(--duration-base)]"
+              className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--color-text-primary)] transition-colors duration-[var(--duration-base)] hover:text-[var(--color-accent)]"
               style={{ fontFamily: "var(--font-mono)" }}
               aria-label="Shalom Ndahiriwe — home"
             >
-              SN
-            </a>
+              Shalom Ndahiriwe
+            </Link>
           </div>
 
           {/* CENTER — desktop nav links */}
@@ -205,18 +207,13 @@ export function Navigation() {
           </nav>
 
           {/* RIGHT — active label (desktop) + hamburger (mobile) */}
-          <div ref={rightRef} className="flex-1 flex items-center justify-end gap-4">
-            {/* Active section label — desktop only, always takes space */}
+          <div ref={rightRef} className="flex-1 flex items-center justify-end gap-5">
             <span
-              className="hidden lg:block text-[10px] tracking-[0.2em] uppercase transition-opacity duration-[var(--duration-base)]"
-              style={{
-                fontFamily: "var(--font-mono)",
-                color: "var(--color-accent)",
-                opacity: activeSection ? 1 : 0,
-              }}
-              aria-hidden="true"
+              className="hidden items-center gap-2 text-[10px] uppercase tracking-[0.18em] lg:flex"
+              style={{ fontFamily: "var(--font-mono)", color: "var(--color-text-muted)" }}
             >
-              {activeSection || "·"}
+              <span className="h-1.5 w-1.5 rounded-full bg-[var(--color-accent)]" aria-hidden="true" />
+              Available
             </span>
 
             {/* Mobile hamburger */}
