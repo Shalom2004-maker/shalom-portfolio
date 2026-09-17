@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import Image from "next/image";
 import { ArrowRight, GitBranch } from "lucide-react";
 import { animate, createTimeline, stagger } from "animejs";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
@@ -62,11 +63,7 @@ export function Hero() {
   }
 
   useEffect(() => {
-    console.debug("Hero.useEffect start", { reducedMotion, hasSection: !!sectionRef.current, hasName: !!nameRef.current });
-    if (reducedMotion || !sectionRef.current || !nameRef.current) {
-      console.debug("Hero.useEffect early exit", { reducedMotion });
-      return;
-    }
+    if (reducedMotion || !sectionRef.current || !nameRef.current) return;
 
     const section = sectionRef.current;
     const nameEl = nameRef.current;
@@ -90,7 +87,6 @@ export function Hero() {
       }
 
       // Split the name heading into individual words with clip overflow
-      console.debug("Hero: running splitWords on nameEl");
       splitter = splitWords(nameEl);
 
       // The inner word spans are the direct children of each clip wrapper
@@ -104,8 +100,6 @@ export function Hero() {
       const panel = section.querySelector<HTMLElement>("[data-hero-panel]");
 
       // NOTE: Do NOT forcibly hide elements here — we want them visible immediately.
-
-      console.debug("Hero: initial styles ensured visible", { restCount: rest.length, hasPanel: !!panel });
 
       tl = createTimeline({ defaults: { ease: "outCubic" } });
       // 1. Index label
@@ -132,7 +126,6 @@ export function Hero() {
 
       // Failsafe: ensure reveal doesn't remain hidden if timeline fails to start
       fallback = window.setTimeout(() => {
-        console.debug("Hero: fallback fired — forcing visible state");
         const restEls = Array.from(section.querySelectorAll<HTMLElement>("[data-hero-reveal]"));
         restEls.forEach((el) => {
           if (el.style.opacity === "0") {
@@ -285,6 +278,20 @@ export function Hero() {
           </HeroCTA>
         </div>
       </div>
+
+      {/* ── Hero image ── */}
+      <figure
+        className="relative mt-12 w-full max-w-sm overflow-hidden rounded-xl border border-[var(--color-border)] lg:absolute lg:right-10 lg:top-24 lg:mt-0 lg:w-56"
+      >
+        <Image
+          src="/images/Hero-image.jpg"
+          alt="Shalom Ndahiriwe"
+          width={480}
+          height={511}
+          priority
+          className="h-auto w-full object-cover"
+        />
+      </figure>
 
       {/* ── System status panel ── */}
       <SystemStatusPanel />

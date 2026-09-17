@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import Image from "next/image";
 import { animate, stagger } from "animejs";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { SectionHeading } from "@/components/ui/SectionHeading";
@@ -159,7 +160,7 @@ export function About() {
         {/* ── Right column — CURRENTLY panel + portrait placeholder ── */}
         <div className="lg:col-span-5 flex flex-col gap-6">
 
-          {/* Portrait placeholder */}
+          {/* Portrait */}
           <div
             data-about-reveal
             className="relative w-full aspect-[4/5] rounded-xl overflow-hidden"
@@ -167,27 +168,14 @@ export function About() {
               backgroundColor: "var(--color-surface)",
               border: "1px solid var(--color-border)",
             }}
-            aria-hidden="true"
           >
-            {/* Grid texture */}
-            <div
-              className="absolute inset-0 opacity-20"
-              style={{
-                backgroundImage:
-                  "linear-gradient(var(--color-border) 1px, transparent 1px), linear-gradient(90deg, var(--color-border) 1px, transparent 1px)",
-                backgroundSize: "32px 32px",
-              }}
+            <Image
+              src="/images/Portfolio.jpg"
+              alt="Shalom Ndahiriwe"
+              fill
+              sizes="(min-width: 1024px) 41.67vw, 100vw"
+              className="object-cover"
             />
-            {/* Label */}
-            <span
-              className="absolute bottom-4 left-4 text-[10px] tracking-widest uppercase"
-              style={{
-                fontFamily: "var(--font-mono)",
-                color: "var(--color-text-muted)",
-              }}
-            >
-              [PORTRAIT]
-            </span>
           </div>
 
           {/* CURRENTLY panel — glass surface per spec §8 */}
