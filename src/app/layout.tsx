@@ -33,26 +33,26 @@ export const metadata: Metadata = {
     process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
   ),
   title: {
-    default: "Shalom Nadhanlirive — Frontend Developer",
-    template: "%s — Shalom Nadhanlirive",
+    default: "Shalom Ndahiriwe — Full-Stack Developer",
+    template: "%s — Shalom Ndahiriwe",
   },
   description:
-    "Frontend developer building polished digital experiences. Specialising in web applications with an emphasis on engineering quality and interaction design.",
-  keywords: ["frontend developer", "web developer", "React", "Next.js", "TypeScript"],
-  authors: [{ name: "Shalom Nadhanlirive" }],
-  creator: "Shalom Nadhanlirive",
+    "B.Tech (IT) student and full-stack developer who builds thoughtful, functional web applications with modern technologies, clean interfaces, and attention to the details that make software feel complete.",
+  keywords: ["full-stack developer", "web developer", "React", "Next.js", "TypeScript", "Supabase", "Flutter"],
+  authors: [{ name: "Shalom Ndahiriwe" }],
+  creator: "Shalom Ndahiriwe",
   openGraph: {
     type: "website",
     locale: "en_US",
-    siteName: "Shalom Nadhanlirive",
-    title: "Shalom Nadhanlirive — Frontend Developer",
+    siteName: "Shalom Ndahiriwe",
+    title: "Shalom Ndahiriwe — Full-Stack Developer",
     description:
-      "Frontend developer building polished digital experiences.",
+      "B.Tech (IT) student and full-stack developer building thoughtful, functional web applications.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Shalom Nadhanlirive — Frontend Developer",
-    description: "Frontend developer building polished digital experiences.",
+    title: "Shalom Ndahiriwe — Full-Stack Developer",
+    description: "B.Tech (IT) student and full-stack developer building thoughtful, functional web applications.",
   },
   robots: {
     index: true,

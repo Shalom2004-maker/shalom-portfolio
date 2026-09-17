@@ -8,7 +8,7 @@ import { ImageResponse } from "next/og";
  * display: "flex" | "none" | "contents".
  */
 export const runtime = "nodejs";
-export const alt = "Shalom Nadhanlirive — Frontend Developer";
+export const alt = "Shalom Ndahiriwe — Full-Stack Developer";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -42,7 +42,7 @@ export default function OgImage() {
             color: "#4DA3FF",
           }}
         >
-          PORTFOLIO · WEB DEVELOPER
+          FULL-STACK DEVELOPER · WEB APPLICATIONS
         </div>
 
         {/* Wordmark — top right */}
@@ -81,7 +81,7 @@ export default function OgImage() {
             }}
           >
             <span>SHALOM</span>
-            <span>NADHANLIRIVE</span>
+            <span>NDAHIRIWE</span>
           </div>
           <div
             style={{
@@ -91,7 +91,7 @@ export default function OgImage() {
               letterSpacing: "0.05em",
             }}
           >
-            I BUILD DIGITAL EXPERIENCES.
+            I BUILD WEB EXPERIENCES.
           </div>
         </div>
 
