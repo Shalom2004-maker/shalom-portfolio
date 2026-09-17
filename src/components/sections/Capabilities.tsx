@@ -6,69 +6,59 @@ import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { cn } from "@/lib/cn";
 
-// ─── Data ─────────────────────────────────────────────────────────────────────
+type TechnologyCategory = "Frontend" | "Backend & Data" | "Mobile" | "Tools" | "Learning";
 
-interface CapabilityGroup {
-  id: string;
-  label: string;
-  items: string[];
-}
+type Technology = {
+  name: string;
+  category: TechnologyCategory;
+  icon: TechnologyIconName;
+};
 
-/**
- * Technology inventory — replace with confirmed skills.
- * Spec §13: "no percentage bars", grouped by domain.
- * Spec §26: final technology inventory remains a placeholder.
- */
-const CAPABILITY_GROUPS: CapabilityGroup[] = [
-  {
-    id: "frontend",
-    label: "Frontend",
-    items: [
-      "React",
-      "Next.js",
-      "TypeScript",
-      "JavaScript",
-      "HTML",
-      "CSS",
-      "Tailwind CSS",
-    ],
-  },
-  {
-    id: "backend",
-    label: "Backend & Data",
-    items: [
-      "PHP",
-      "Supabase",
-      "PostgreSQL",
-      "PL/pgSQL",
-    ],
-  },
-  {
-    id: "mobile",
-    label: "Mobile",
-    items: ["Flutter", "Dart"],
-  },
-  {
-    id: "tools",
-    label: "Tools",
-    items: ["Git", "GitHub", "VS Code", "Vercel", "Figma"],
-  },
-  {
-    id: "learning",
-    label: "Learning / In progress",
-    items: ["C#", "ASP.NET"],
-  },
+type TechnologyIconName =
+  | "react"
+  | "next"
+  | "typescript"
+  | "javascript"
+  | "html"
+  | "css"
+  | "tailwind"
+  | "php"
+  | "supabase"
+  | "postgresql"
+  | "plpgsql"
+  | "flutter"
+  | "dart"
+  | "git"
+  | "github"
+  | "vscode"
+  | "vercel"
+  | "figma"
+  | "csharp"
+  | "aspnet";
+
+const TECHNOLOGIES: Technology[] = [
+  { name: "React", category: "Frontend", icon: "react" },
+  { name: "Next.js", category: "Frontend", icon: "next" },
+  { name: "TypeScript", category: "Frontend", icon: "typescript" },
+  { name: "JavaScript", category: "Frontend", icon: "javascript" },
+  { name: "HTML", category: "Frontend", icon: "html" },
+  { name: "CSS", category: "Frontend", icon: "css" },
+  { name: "Tailwind CSS", category: "Frontend", icon: "tailwind" },
+  { name: "PHP", category: "Backend & Data", icon: "php" },
+  { name: "Supabase", category: "Backend & Data", icon: "supabase" },
+  { name: "PostgreSQL", category: "Backend & Data", icon: "postgresql" },
+  { name: "PL/pgSQL", category: "Backend & Data", icon: "plpgsql" },
+  { name: "Flutter", category: "Mobile", icon: "flutter" },
+  { name: "Dart", category: "Mobile", icon: "dart" },
+  { name: "Git", category: "Tools", icon: "git" },
+  { name: "GitHub", category: "Tools", icon: "github" },
+  { name: "VS Code", category: "Tools", icon: "vscode" },
+  { name: "Vercel", category: "Tools", icon: "vercel" },
+  { name: "Figma", category: "Tools", icon: "figma" },
+  { name: "C#", category: "Learning", icon: "csharp" },
+  { name: "ASP.NET", category: "Learning", icon: "aspnet" },
 ];
 
-// ─── Component ────────────────────────────────────────────────────────────────
-
-/**
- * Capabilities — spec §13.
- *
- * Skills presented as capability groups, not percentage bars.
- * Each group shows a domain label + a chip list of technologies.
- * Layout: responsive grid of group cards.
- */
 export function Capabilities() {
   const reducedMotion = useReducedMotion();
   const sectionRef = useRef<HTMLElement>(null);
@@ -77,57 +67,54 @@ export function Capabilities() {
   useEffect(() => {
     if (reducedMotion || !sectionRef.current) return;
 
-    const targets = Array.from(sectionRef.current.querySelectorAll<HTMLElement>("[data-cap-reveal]"));
-
+    const section = sectionRef.current;
+    const targets = Array.from(section.querySelectorAll<HTMLElement>("[data-cap-reveal]"));
     if (!targets.length) return;
+    let fallback: number | undefined;
 
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting && !hasAnimated.current) {
-          hasAnimated.current = true;
-          try {
-            targets.forEach((el) => {
-              el.style.opacity = "0";
-              el.style.transform = "translateY(24px)";
-            });
-            requestAnimationFrame(() => {
-              animate(targets, {
-                opacity: [0, 1],
-                translateY: [24, 0],
-                duration: 600,
-                delay: stagger(80),
-                ease: "outCubic",
-              });
-            });
-          } catch (err) {
-            // Restore on error
-            // eslint-disable-next-line no-console
-            console.error("Capabilities animation failed:", err);
-            targets.forEach((el) => {
-              el.style.opacity = "1";
-              el.style.transform = "none";
-            });
-          }
+        if (!entries[0]?.isIntersecting || hasAnimated.current) return;
+        hasAnimated.current = true;
+        observer.disconnect();
 
-          observer.disconnect();
+        targets.forEach((element) => {
+          element.style.opacity = "0";
+          element.style.transform = "translateY(18px)";
+        });
+
+        try {
+          const animation = animate(targets, {
+            opacity: [0, 1],
+            translateY: [18, 0],
+            duration: 520,
+            delay: stagger(55),
+            ease: "outCubic",
+          });
+
+          fallback = window.setTimeout(() => {
+            targets.forEach((element) => {
+              element.style.opacity = "1";
+              element.style.transform = "none";
+            });
+            animation.pause();
+          }, 1200);
+        } catch (error) {
+          console.error("Capabilities animation failed:", error);
+          targets.forEach((element) => {
+            element.style.opacity = "1";
+            element.style.transform = "none";
+          });
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.12 }
     );
 
-    observer.observe(sectionRef.current);
-
-    const fallback = window.setTimeout(() => {
-      const targetsNow = Array.from(sectionRef.current?.querySelectorAll<HTMLElement>("[data-cap-reveal]") ?? []);
-      targetsNow.forEach((el) => {
-        if (el.style.opacity === "0") {
-          el.style.opacity = "1";
-          el.style.transform = "none";
-        }
-      });
-    }, 1200);
-
-    return () => { clearTimeout(fallback); observer.disconnect(); };
+    observer.observe(section);
+    return () => {
+      observer.disconnect();
+      if (fallback) window.clearTimeout(fallback);
+    };
   }, [reducedMotion]);
 
   return (
@@ -135,84 +122,110 @@ export function Capabilities() {
       id="capabilities"
       ref={sectionRef}
       aria-labelledby="capabilities-heading"
-      className="max-w-7xl mx-auto w-full px-6 md:px-10 py-24 md:py-32"
+      className="mx-auto w-full max-w-7xl px-6 py-24 md:px-10 md:py-32"
       style={{ backgroundColor: "var(--color-surface)" }}
     >
-      {/* Top border */}
-      <div
-        className="mb-16 h-px"
-        style={{ backgroundColor: "var(--color-border)" }}
-        aria-hidden="true"
-      />
+      <div className="mb-16 h-px" style={{ backgroundColor: "var(--color-border)" }} aria-hidden="true" />
 
-      <div data-cap-reveal className="mb-14">
+      <div data-cap-reveal className="mb-12">
         <SectionHeading
           index="04"
-          heading="Capabilities"
-          subheading="Technologies and tools I work with — grouped by domain."
+          heading="Technologies"
+          subheading="A focused toolkit for building thoughtful, functional applications."
           as="h2"
         />
       </div>
 
-      {/* Group grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {CAPABILITY_GROUPS.map((group) => (
-          <CapabilityGroupCard key={group.id} group={group} />
+      <div
+        className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:gap-4 lg:grid-cols-4"
+        aria-label="Technologies and tools"
+      >
+        {TECHNOLOGIES.map((technology) => (
+          <TechnologyCard key={technology.name} technology={technology} />
         ))}
       </div>
     </section>
   );
 }
 
-// ─── Group card ───────────────────────────────────────────────────────────────
-
-function CapabilityGroupCard({ group }: { group: CapabilityGroup }) {
+function TechnologyCard({ technology }: { technology: Technology }) {
   return (
-    <div
+    <article
       data-cap-reveal
       className={cn(
-        "rounded-xl p-6",
-        "border border-[var(--color-border)]",
-        "bg-[var(--color-bg)]",
-        "transition-colors duration-[var(--duration-base)]",
-        "hover:border-[var(--color-border-strong)]"
+        "group flex min-h-[7.25rem] flex-col justify-between border border-[var(--color-border)]",
+        "bg-[rgba(7,9,13,0.42)] p-4 transition-all duration-[var(--duration-base)]",
+        "hover:-translate-y-0.5 hover:border-[var(--color-accent)] hover:bg-[rgba(13,17,23,0.8)]",
+        "hover:shadow-[0_0_24px_rgba(77,163,255,0.10)] focus-within:border-[var(--color-accent)]"
       )}
     >
-      {/* Group label */}
-      <p
-        className="text-[10px] tracking-[0.25em] uppercase mb-4"
-        style={{
-          fontFamily: "var(--font-mono)",
-          color: "var(--color-accent)",
-        }}
+      <div className="flex items-start justify-between gap-3">
+        <TechnologyIcon name={technology.icon} />
+        <span
+          className="text-[9px] uppercase tracking-[0.14em] opacity-0 transition-opacity duration-[var(--duration-base)] group-hover:opacity-100"
+          style={{ fontFamily: "var(--font-mono)", color: "var(--color-accent)" }}
+        >
+          {technology.category}
+        </span>
+      </div>
+      <h3
+        className="mt-6 text-sm font-medium leading-tight text-[var(--color-text-primary)] transition-colors duration-[var(--duration-base)] group-hover:text-[var(--color-accent)]"
+        style={{ fontFamily: "var(--font-mono)" }}
       >
-        {group.label}
-      </p>
+        {technology.name}
+      </h3>
+    </article>
+  );
+}
 
-      {/* Skill chips */}
-      <ul className="flex flex-wrap gap-2" aria-label={`${group.label} technologies`}>
-        {group.items.map((item, i) => (
-          <li key={`${group.id}-${i}`}>
-            <span
-              className={cn(
-                "inline-flex items-center",
-                "px-3 py-1.5 rounded-lg",
-                "text-xs font-medium",
-                "border border-[var(--color-border)]",
-                "transition-colors duration-[var(--duration-base)]",
-                "hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
-              )}
-              style={{
-                fontFamily: "var(--font-mono)",
-                color: "var(--color-text-muted)",
-                backgroundColor: "var(--color-surface)",
-              }}
-            >
-              {item}
-            </span>
-          </li>
-        ))}
-      </ul>
-    </div>
+function TechnologyIcon({ name }: { name: TechnologyIconName }) {
+  const common = {
+    className:
+      "h-8 w-8 text-[var(--color-text-muted)] transition-all duration-[var(--duration-base)] group-hover:scale-110 group-hover:text-[var(--color-accent)]",
+    "aria-hidden": true as const,
+    focusable: false as const,
+  };
+
+  if (name === "react") {
+    return <svg {...common} viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="3" fill="currentColor" /><g stroke="currentColor" strokeWidth="1.5"><ellipse cx="16" cy="16" rx="13" ry="5" /><ellipse cx="16" cy="16" rx="13" ry="5" transform="rotate(60 16 16)" /><ellipse cx="16" cy="16" rx="13" ry="5" transform="rotate(120 16 16)" /></g></svg>;
+  }
+
+  const letterMarks: Partial<Record<TechnologyIconName, string>> = {
+    next: "N",
+    typescript: "TS",
+    javascript: "JS",
+    html: "<>",
+    css: "#",
+    tailwind: "≋",
+    php: "PHP",
+    supabase: "S",
+    postgresql: "PG",
+    plpgsql: "SQL",
+    flutter: "F",
+    dart: "D",
+    git: "⌘",
+    github: "GH",
+    vscode: "VS",
+    vercel: "▲",
+    figma: "F",
+    csharp: "C#",
+    aspnet: ".N",
+  };
+
+  return (
+    <svg {...common} viewBox="0 0 40 40" fill="none">
+      <rect x="1" y="1" width="38" height="38" rx="7" stroke="currentColor" strokeWidth="1.5" />
+      <text
+        x="20"
+        y="24"
+        fill="currentColor"
+        textAnchor="middle"
+        fontSize={name === "php" || name === "postgresql" || name === "plpgsql" ? "7" : "12"}
+        fontWeight="600"
+        fontFamily="var(--font-mono)"
+      >
+        {letterMarks[name]}
+      </text>
+    </svg>
   );
 }
