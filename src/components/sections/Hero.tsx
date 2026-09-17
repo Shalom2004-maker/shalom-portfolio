@@ -146,7 +146,7 @@ export function Hero() {
         <div data-hero-reveal className="relative lg:pl-4">
           <figure className="relative aspect-[480/511] w-full overflow-hidden border border-[var(--color-border)] bg-[var(--color-surface)]">
             <Image
-              src="/images/Hero-image.jpg"
+              src="/images/Hero-image.png"
               alt="Shalom Ndahiriwe, full-stack developer"
               fill
               priority
@@ -197,7 +197,7 @@ function HeroCTA({ href, children, primary = false, external = false }: HeroCTAP
       rel={external ? "noopener noreferrer" : undefined}
       className={cn(
         "group inline-flex h-11 items-center gap-2 px-5 text-sm font-semibold uppercase tracking-[0.05em]",
-        "transition-colors duration-[var(--duration-base)] focus-visible:ring-2",
+        "transition-colors rounded-3xl duration-[var(--duration-base)] focus-visible:ring-2",
         "focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg)]",
         primary
           ? "bg-[var(--color-accent)] text-[#07090D] hover:bg-[#6db8ff]"

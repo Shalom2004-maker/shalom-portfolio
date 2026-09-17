@@ -12,7 +12,7 @@ import { cn } from "@/lib/cn";
 const CURRENTLY = [
   { label: "Building", value: "Web applications" },
   { label: "Exploring", value: "New technologies and systems" },
-  { label: "Learning", value: "C#, ASP.NET" },
+  { label: "Learning", value: "C#, ASP.NET, Java" },
 ] as const;
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -170,7 +170,7 @@ export function About() {
             }}
           >
             <Image
-              src="/images/Portfolio.jpg"
+              src="/images/Portrait.png"
               alt="Shalom Ndahiriwe"
               fill
               sizes="(min-width: 1024px) 41.67vw, 100vw"

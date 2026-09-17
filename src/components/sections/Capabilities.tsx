@@ -34,6 +34,7 @@ const CAPABILITY_GROUPS: CapabilityGroup[] = [
       { name: "HTML", logo: "html" },
       { name: "CSS", logo: "css" },
       { name: "Tailwind CSS", logo: "tailwind" },
+      { name: "Bootstrap", logo: "bootstrap" },
     ],
   },
   {
@@ -45,7 +46,7 @@ const CAPABILITY_GROUPS: CapabilityGroup[] = [
       { name: "PHP", logo: "php" },
       { name: "Supabase", logo: "supabase" },
       { name: "PostgreSQL", logo: "postgresql" },
-      { name: "PL/pgSQL", logo: "postgresql" },
+      { name: "MySQL", logo: "mysql" },
     ],
   },
   {
@@ -79,6 +80,7 @@ const CAPABILITY_GROUPS: CapabilityGroup[] = [
     items: [
       { name: "C#", logo: "csharp" },
       { name: "ASP.NET", logo: "dotnet" },
+      { name: "Java", logo: "java" },
     ],
   },
 ];
@@ -197,9 +199,9 @@ function CapabilityGroupCard({
     <article
       data-cap-reveal
       className={cn(
-        "relative min-h-[17rem] overflow-hidden border border-[var(--color-accent)]/70 p-5",
+        "relative min-h-[17rem] overflow-hidden border border-[var(--color-accent-glow)]/70 p-5",
         "bg-[rgba(7,9,13,0.56)] transition-colors duration-[var(--duration-base)]",
-        "hover:bg-[rgba(13,17,23,0.72)]",
+        "hover:bg-[rgba(13,17,23,0.72)] rounded-lg",
         className
       )}
     >
@@ -233,8 +235,8 @@ function CapabilityGroupCard({
       >
         {group.items.map((technology) => (
           <li key={technology.name} className="min-w-0">
-            <div className="group flex flex-col items-center gap-2 text-center">
-              <div className="flex h-[4.25rem] w-full max-w-[6rem] items-center justify-center border border-[rgba(77,163,255,0.28)] bg-[rgba(13,17,23,0.65)] transition-all duration-[var(--duration-base)] group-hover:border-[var(--color-accent)] group-hover:shadow-[0_0_18px_rgba(77,163,255,0.12)]">
+            <div className="group flex flex-col items-center gap-2 text-center transition-colors duration-[var(--duration-base)] rounded-lg">
+              <div className="flex h-[4.25rem] w-full max-w-[6rem] items-center rounded-2xl justify-center border border-[rgba(77,163,255,0.28)] bg-[rgba(13,17,23,0.65)] transition-all duration-[var(--duration-base)] group-hover:border-[var(--color-accent)] group-hover:shadow-[0_0_18px_rgba(77,163,255,0.12)]">
                 <Image
                   src={`/icons/${technology.logo}.svg`}
                   alt=""
@@ -256,7 +258,7 @@ function CapabilityGroupCard({
         ))}
       </ul>
 
-      <span className="absolute bottom-0 right-0 h-5 w-5 border-l border-t border-[var(--color-accent)]" aria-hidden="true" />
+      <span className="absolute bottom-0 right-0 h-5 w-5 border-l border-t border-[var(--color-accent-glow)]" aria-hidden="true" />
     </article>
   );
 }
