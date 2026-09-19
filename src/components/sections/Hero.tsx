@@ -143,30 +143,24 @@ export function Hero() {
           </div>
         </div>
 
-        <div data-hero-reveal className="relative lg:pl-4">
-          <figure className="relative aspect-[480/511] w-full overflow-hidden border border-[var(--color-border)] bg-[var(--color-surface)]">
+        <div data-hero-reveal className="relative flex items-center justify-center lg:pl-4">
+          <figure className="relative aspect-[3/2] w-full max-w-[46rem] overflow-hidden">
             <Image
               src="/images/HeroBG.png"
               alt="Shalom Ndahiriwe, full-stack developer"
               fill
               priority
               sizes="(min-width: 1024px) 48vw, 100vw"
-              className="object-cover object-center"
+              className="object-contain object-center"
             />
             <div
               className="pointer-events-none absolute inset-0"
               style={{
                 background:
-                  "linear-gradient(180deg, transparent 60%, rgba(7,9,13,0.38) 100%)",
+                  "linear-gradient(180deg, transparent 62%, rgba(7,9,13,0.28) 100%)",
               }}
               aria-hidden="true"
             />
-            <figcaption
-              className="absolute bottom-4 left-4 text-[10px] uppercase tracking-[0.2em]"
-              style={{ fontFamily: "var(--font-mono)", color: "rgba(244,247,250,0.8)" }}
-            >
-              Profile / 01
-            </figcaption>
           </figure>
 
           <SystemStatusPanel />
