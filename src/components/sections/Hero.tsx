@@ -146,7 +146,7 @@ export function Hero() {
         <div data-hero-reveal className="relative lg:pl-4">
           <figure className="relative aspect-[480/511] w-full overflow-hidden border border-[var(--color-border)] bg-[var(--color-surface)]">
             <Image
-              src="/images/Hero-image.png"
+              src="/images/HeroBG.png"
               alt="Shalom Ndahiriwe, full-stack developer"
               fill
               priority

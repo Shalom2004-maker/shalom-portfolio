@@ -152,7 +152,7 @@ export function About() {
               }}
               aria-hidden="true"
             >
-              Est. [YEAR]
+              Est. 2028
             </span>
           </div>
         </div>
