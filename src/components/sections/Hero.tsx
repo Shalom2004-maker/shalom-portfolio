@@ -143,8 +143,8 @@ export function Hero() {
           </div>
         </div>
 
-        <div data-hero-reveal className="relative flex items-center justify-center lg:pl-4">
-          <figure className="relative aspect-[3/2] w-full max-w-[46rem] overflow-hidden">
+        <div data-hero-reveal className="relative flex items-center justify-center lg:-mr-6 lg:pl-0">
+          <figure className="relative aspect-square w-full max-w-[42rem] overflow-hidden">
             <Image
               src="/images/HeroBG.png"
               alt="Shalom Ndahiriwe, full-stack developer"
