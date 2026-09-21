@@ -145,3 +145,142 @@ code, kbd, samp, pre {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-text-muted);
 }
+
+/* ─── Open Props-inspired animations ─────────────────────────────────────────
+   Lightweight CSS animations for status, interaction, and attention states.
+   Alternatives to external dependency; respects prefers-reduced-motion.
+   ──────────────────────────────────────────────────────────────────────────── */
+
+/* PULSE — Subtle availability/status indicators */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.op-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* BOUNCE — Occasional CTA/icon feedback */
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-0.5rem);
+  }
+}
+
+.op-bounce {
+  animation: bounce 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+}
+
+/* BOUNCE ONCE — One-time interaction feedback */
+@keyframes bounce-once {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-0.5rem);
+  }
+}
+
+.op-bounce-once {
+  animation: bounce-once 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) 1 forwards;
+}
+
+/* SHAKE Z — Subtle rotational depth/attention */
+@keyframes shake-z {
+  0% { transform: rotateZ(0deg); }
+  10% { transform: rotateZ(1deg); }
+  20% { transform: rotateZ(-1deg); }
+  30% { transform: rotateZ(1deg); }
+  40% { transform: rotateZ(-1deg); }
+  50% { transform: rotateZ(0deg); }
+  100% { transform: rotateZ(0deg); }
+}
+
+.op-shake-z {
+  animation: shake-z 0.5s cubic-bezier(0.4, 0, 0.6, 1);
+}
+
+.op-shake-z-loop {
+  animation: shake-z 0.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* SHAKE — Horizontal intentional interaction/error states */
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateX(-0.25rem);
+  }
+  20%, 40%, 60%, 80% {
+    transform: translateX(0.25rem);
+  }
+}
+
+.op-shake {
+  animation: shake 0.5s cubic-bezier(0.36, 0, 0.66, -0.56);
+}
+
+/* BLOB BORDER RADII — Organic shapes for atmospheric decorations */
+.op-blob-radius-1 {
+  border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+}
+
+.op-blob-radius-2 {
+  border-radius: 58% 42% 48% 52% / 38% 58% 42% 62%;
+}
+
+.op-blob-radius-3 {
+  border-radius: 63% 37% 54% 46% / 33% 67% 33% 67%;
+}
+
+/* SOFT GLOW — Subtle card accent highlight on interaction */
+@keyframes soft-glow {
+  0%, 100% {
+    box-shadow: inset 0 0 0 1px rgba(77, 163, 255, 0.2);
+  }
+  50% {
+    box-shadow: inset 0 0 20px rgba(77, 163, 255, 0.15);
+  }
+}
+
+.op-hover-glow {
+  transition: box-shadow var(--duration-base) var(--ease-out-cubic);
+}
+
+.op-hover-glow:hover {
+  box-shadow: inset 0 0 15px rgba(77, 163, 255, 0.25);
+}
+
+/* INTERACTIVE SCALE — Consistent hover scaling */
+.op-interactive-scale {
+  transition: transform var(--duration-base) var(--ease-out-cubic);
+}
+
+.op-interactive-scale:hover {
+  transform: scale(1.05);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .op-pulse,
+  .op-bounce,
+  .op-bounce-once,
+  .op-shake-z,
+  .op-shake-z-loop,
+  .op-shake {
+    animation: none;
+  }
+
+  .op-hover-glow,
+  .op-interactive-scale {
+    transition: none;
+  }
+}

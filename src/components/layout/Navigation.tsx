@@ -212,7 +212,7 @@ export function Navigation() {
               className="hidden items-center gap-2 text-[10px] uppercase tracking-[0.18em] lg:flex"
               style={{ fontFamily: "var(--font-mono)", color: "var(--color-text-muted)" }}
             >
-              <span className="h-1.5 w-1.5 rounded-full bg-[var(--color-accent)]" aria-hidden="true" />
+              <span className="op-pulse h-1.5 w-1.5 rounded-full bg-[var(--color-accent)]" aria-hidden="true" />
               Available
             </span>
 
