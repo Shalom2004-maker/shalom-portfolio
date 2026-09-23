@@ -247,11 +247,11 @@ function TimelineEntry({
       <div
         data-tl-card
         className={cn(
-          "rounded-xl p-6",
-          "border border-[var(--color-border)]",
+          "op-mask-corner-cuts-angle-1 p-6",
+          "border border-[rgba(77,163,255,0.24)]",
           "bg-[var(--color-surface)]",
           "transition-colors duration-[var(--duration-base)]",
-          "hover:border-[var(--color-border-strong)]"
+          "hover:border-[var(--color-accent)]"
         )}
       >
         {/* Date + type badge */}

@@ -163,7 +163,7 @@ export function About() {
           {/* Portrait */}
           <div
             data-about-reveal
-            className="relative w-full aspect-[4/5] rounded-xl overflow-hidden"
+            className="op-mask-corner-cuts-angle-2 relative aspect-[4/5] w-full overflow-hidden border border-[rgba(77,163,255,0.28)]"
             style={{
               backgroundColor: "var(--color-surface)",
               border: "1px solid var(--color-border)",
@@ -182,7 +182,7 @@ export function About() {
           <div
             data-about-reveal
             className={cn(
-              "rounded-xl border border-[var(--color-border)]",
+              "op-mask-corner-cuts-angle-1 border border-[rgba(77,163,255,0.24)]",
               "bg-[rgba(13,17,23,0.7)] backdrop-blur-sm",
               "p-6"
             )}

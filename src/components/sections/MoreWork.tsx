@@ -85,8 +85,8 @@ export function MoreWork() {
       {/* Contained accent block */}
       <div
         className={cn(
-          "relative rounded-2xl overflow-hidden",
-          "border border-[var(--color-border)]",
+          "op-mask-corner-cuts-angle-2 relative overflow-hidden",
+          "border border-[rgba(77,163,255,0.28)]",
           "bg-[var(--color-surface)]",
           "px-8 md:px-14 py-14 md:py-20",
           "flex flex-col md:flex-row md:items-center md:justify-between gap-8"

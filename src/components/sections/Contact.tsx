@@ -210,13 +210,13 @@ export function Contact() {
               target={external ? "_blank" : undefined}
               rel={external ? "noopener noreferrer" : undefined}
               className={cn(
-                "group flex items-center justify-between",
-                "px-5 py-4 rounded-xl",
-                "border border-[var(--color-border)]",
+                "op-mask-corner-cuts-angle-1 group flex items-center justify-between",
+                "px-5 py-4",
+                "border border-[rgba(77,163,255,0.24)]",
                 "bg-[var(--color-surface)]",
                 "transition-all duration-[var(--duration-base)]",
                 "hover:border-[var(--color-accent)] hover:-translate-y-0.5",
-                "hover:shadow-[0_4px_20px_var(--color-accent-glow)]"
+                "hover:shadow-[0_0_10px_rgba(77,163,255,0.08)]"
               )}
             >
               <div className="flex items-center gap-3">

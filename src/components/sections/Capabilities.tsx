@@ -199,14 +199,14 @@ function CapabilityGroupCard({
     <article
       data-cap-reveal
       className={cn(
-        "relative min-h-[17rem] overflow-hidden border border-[var(--color-accent-glow)]/70 p-5",
+        "op-mask-corner-cuts-angle-1 relative min-h-[17rem] overflow-hidden border border-[rgba(77,163,255,0.34)] p-5",
         "bg-[rgba(7,9,13,0.56)] transition-colors duration-[var(--duration-base)]",
-        "hover:bg-[rgba(13,17,23,0.72)] rounded-lg",
+        "hover:border-[var(--color-accent)] hover:bg-[rgba(13,17,23,0.72)]",
         className
       )}
     >
       <div className="mb-7 flex items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
+        <div className="relative z-10 flex items-center gap-3">
           <span
             className="text-sm tracking-[0.14em] text-[var(--color-accent)]"
             style={{ fontFamily: "var(--font-mono)" }}
@@ -221,22 +221,30 @@ function CapabilityGroupCard({
             {group.label}
           </h3>
         </div>
-        <span
-          className="text-[9px] uppercase tracking-[0.12em] text-[var(--color-text-muted)]"
-          style={{ fontFamily: "var(--font-mono)" }}
-        >
-          {group.descriptor}
-        </span>
+        <div className="relative z-10 flex items-center gap-2">
+          {group.id === "learning" && (
+            <span
+              className="op-pulse h-1.5 w-1.5 rounded-full bg-[var(--color-accent)]"
+              aria-label="Currently learning"
+            />
+          )}
+          <span
+            className="text-[9px] uppercase tracking-[0.12em] text-[var(--color-text-muted)]"
+            style={{ fontFamily: "var(--font-mono)" }}
+          >
+            {group.descriptor}
+          </span>
+        </div>
       </div>
 
       <ul
-        className="grid grid-cols-2 gap-x-4 gap-y-5 sm:grid-cols-3 lg:grid-cols-4"
+        className="relative z-10 grid grid-cols-2 gap-x-4 gap-y-5 sm:grid-cols-3 lg:grid-cols-4"
         aria-label={`${group.label} technologies`}
       >
         {group.items.map((technology) => (
           <li key={technology.name} className="min-w-0">
             <div className="group flex flex-col items-center gap-2 text-center transition-colors duration-[var(--duration-base)] rounded-lg">
-              <div className="op-hover-glow op-interactive-scale flex h-[4.25rem] w-full max-w-[6rem] items-center justify-center rounded-2xl border border-[rgba(77,163,255,0.28)] bg-[rgba(13,17,23,0.65)] transition-all duration-[var(--duration-base)] group-hover:border-[var(--color-accent)] group-hover:shadow-[0_0_18px_rgba(77,163,255,0.12)]">
+              <div className="op-mask-corner-cuts-angle-1 op-hover-glow flex h-[4.25rem] w-full max-w-[6rem] items-center justify-center border border-[rgba(77,163,255,0.28)] bg-[rgba(13,17,23,0.65)] group-hover:border-[var(--color-accent)]">
                 <Image
                   src={`/icons/${technology.logo}.svg`}
                   alt=""
@@ -257,18 +265,6 @@ function CapabilityGroupCard({
           </li>
         ))}
       </ul>
-
-      {/* Pulse effect for Learning group to indicate active growth */}
-      {group.id === "learning" && (
-        <div
-          className="op-pulse op-blob-radius-2 pointer-events-none absolute inset-0"
-          style={{
-            background: "rgba(77, 163, 255, 0.05)",
-            opacity: 0.3,
-          }}
-          aria-hidden="true"
-        />
-      )}
 
       <span className="absolute bottom-0 right-0 h-5 w-5 border-l border-t border-[var(--color-accent-glow)]" aria-hidden="true" />
     </article>

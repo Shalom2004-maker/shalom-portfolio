@@ -214,12 +214,12 @@ function FeaturedCard({
       onMouseLeave={handleMouseLeave}
       style={{ perspective: "1000px", transformStyle: "preserve-3d" }}
       className={cn(
-        "group relative overflow-hidden rounded-2xl",
-        "border border-[var(--color-border)]",
+        "op-mask-corner-cuts-angle-2 group relative overflow-hidden",
+        "border border-[rgba(77,163,255,0.28)]",
         "bg-[var(--color-surface)]",
         "transition-shadow duration-[var(--duration-base)]",
-        "hover:shadow-[0_0_40px_var(--color-accent-glow)]",
-        "hover:border-[var(--color-border-strong)]"
+        "hover:shadow-[0_0_12px_rgba(77,163,255,0.08)]",
+        "hover:border-[var(--color-accent)]"
       )}
     >
       {/* Image placeholder */}
@@ -291,11 +291,11 @@ function SecondaryCard({ project, index }: { project: Project; index: number }) 
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       className={cn(
-        "group relative flex flex-col overflow-hidden rounded-xl h-full",
-        "border border-[var(--color-border)]",
+        "op-mask-corner-cuts-angle-1 group relative flex h-full flex-col overflow-hidden",
+        "border border-[rgba(77,163,255,0.24)]",
         "bg-[var(--color-surface)]",
         "transition-all duration-[var(--duration-base)]",
-        hovered && "border-[var(--color-border-strong)] -translate-y-1 shadow-[0_8px_30px_rgba(0,0,0,0.4)]"
+        hovered && "border-[var(--color-accent)] -translate-y-1 shadow-[0_0_12px_rgba(77,163,255,0.08)]"
       )}
     >
       {/* Image placeholder */}
