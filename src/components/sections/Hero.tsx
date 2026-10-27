@@ -1,12 +1,13 @@
 "use client";
 
-import Image from "next/image";
-import { ArrowUpRight, GitBranch } from "lucide-react";
 import { useEffect, useRef } from "react";
-import { animate, createTimeline, stagger } from "animejs";
+import { ArrowUpRight, GitBranch } from "lucide-react";
+import { createTimeline, stagger } from "animejs";
+import { HeroLaptop } from "@/components/ui/HeroLaptop";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
-import { OrbitalSystem } from "@/components/ui/OrbitalSystem";
 import { cn } from "@/lib/cn";
+
+const TECHNOLOGIES = ["React", "Next.js", "TypeScript", "Supabase"] as const;
 
 const STATUS_ITEMS = [
   { label: "STATUS", value: "ONLINE", accent: true },
@@ -19,10 +20,8 @@ const STATUS_ITEMS = [
 const REVEAL_SELECTOR = "[data-hero-reveal]";
 
 /**
- * Hero — a two-column developer identity composition.
- *
- * Content remains visible by default. Anime.js only enhances the entrance,
- * which prevents animation failures from hiding the primary portfolio content.
+ * Hero — developer introduction framed by a CSS-built laptop and system readout.
+ * Content remains visible by default; Anime.js only coordinates its entrance.
  */
 export function Hero() {
   const reducedMotion = useReducedMotion();
@@ -32,7 +31,9 @@ export function Hero() {
     if (reducedMotion || !sectionRef.current) return;
 
     const section = sectionRef.current;
-    const targets = Array.from(section.querySelectorAll<HTMLElement>(REVEAL_SELECTOR));
+    const targets = Array.from(
+      section.querySelectorAll<HTMLElement>(REVEAL_SELECTOR)
+    );
 
     try {
       const timeline = createTimeline({ defaults: { ease: "outCubic" } });
@@ -72,15 +73,18 @@ export function Hero() {
       aria-label="Introduction"
       className={cn(
         "relative mx-auto flex min-h-[calc(100svh-4rem)] w-full max-w-7xl",
-        "items-center px-6 py-12 md:px-10 md:py-16 lg:py-20"
+        "items-center px-6 py-12 md:px-10 md:py-16 xl:py-20"
       )}
     >
-      <div className="grid w-full items-center gap-12 lg:grid-cols-[minmax(0,0.92fr)_minmax(25rem,1.08fr)] lg:gap-16">
-        <div className="relative z-10 flex flex-col items-start">
+      <div className="hero-layout grid w-full items-center gap-x-8 gap-y-10 xl:gap-x-10">
+        <div className="hero-intro relative z-10 flex flex-col items-start">
           <p
             data-hero-reveal
             className="mb-5 text-[10px] uppercase tracking-[0.28em]"
-            style={{ fontFamily: "var(--font-mono)", color: "var(--color-accent)" }}
+            style={{
+              fontFamily: "var(--font-mono)",
+              color: "var(--color-accent)",
+            }}
           >
             01 / Web development
           </p>
@@ -88,7 +92,10 @@ export function Hero() {
           <p
             data-hero-reveal
             className="mb-4 text-xs font-medium uppercase tracking-[0.2em]"
-            style={{ fontFamily: "var(--font-mono)", color: "var(--color-text-muted)" }}
+            style={{
+              fontFamily: "var(--font-mono)",
+              color: "var(--color-text-muted)",
+            }}
           >
             Full-stack developer
           </p>
@@ -99,7 +106,10 @@ export function Hero() {
               "max-w-3xl text-[clamp(3rem,7vw,6.6rem)]",
               "font-semibold uppercase leading-[0.9] tracking-[-0.055em]"
             )}
-            style={{ fontFamily: "var(--font-display)", color: "var(--color-text-primary)" }}
+            style={{
+              fontFamily: "var(--font-display)",
+              color: "var(--color-text-primary)",
+            }}
           >
             Shalom Ndahiriwe
           </h1>
@@ -107,7 +117,10 @@ export function Hero() {
           <p
             data-hero-reveal
             className="mt-7 text-[clamp(1.35rem,2.7vw,2.25rem)] font-medium uppercase leading-tight tracking-[-0.025em]"
-            style={{ fontFamily: "var(--font-display)", color: "var(--color-text-primary)" }}
+            style={{
+              fontFamily: "var(--font-display)",
+              color: "var(--color-text-primary)",
+            }}
           >
             I build web experiences.
           </p>
@@ -117,12 +130,15 @@ export function Hero() {
             className="mt-6 max-w-xl text-base leading-relaxed md:text-lg"
             style={{ color: "var(--color-text-muted)" }}
           >
-            I&apos;m a web developer who builds thoughtful, functional web applications
-            with modern technologies, clean interfaces, and attention to the details
-            that make software feel complete.
+            I&apos;m a web developer who builds thoughtful, functional web
+            applications with modern technologies, clean interfaces, and
+            attention to the details that make software feel complete.
           </p>
 
-          <div data-hero-reveal className="mt-9 flex flex-wrap items-center gap-3">
+          <div
+            data-hero-reveal
+            className="mt-9 flex flex-wrap items-center gap-3"
+          >
             <HeroCTA href="#work" primary>
               Explore work
               <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
@@ -134,41 +150,43 @@ export function Hero() {
             </HeroCTA>
           </div>
 
-          <div
-            data-hero-reveal
-            className="mt-10 flex flex-wrap gap-x-6 gap-y-2 text-[10px] uppercase tracking-[0.18em]"
-            style={{ fontFamily: "var(--font-mono)", color: "var(--color-text-muted)" }}
-          >
-            <span>Profile / Developer</span>
-            <span>Status / Online</span>
-          </div>
         </div>
 
-        <div data-hero-reveal className="relative flex items-center justify-center lg:-mr-6 lg:pl-0">
-          <div className="relative aspect-square w-full max-w-[42rem]">
-            <OrbitalSystem className="absolute inset-0 z-0" />
-            <figure className="relative z-10 h-full w-full overflow-hidden">
-              <Image
-                src="/images/HeroBG.png"
-                alt="Shalom Ndahiriwe, full-stack developer"
-                fill
-                priority
-                sizes="(min-width: 1024px) 48vw, 100vw"
-                className="object-contain object-center"
-              />
-              <div
-                className="pointer-events-none absolute inset-0"
-                style={{
-                  background:
-                    "linear-gradient(180deg, transparent 62%, rgba(7,9,13,0.28) 100%)",
-                }}
-                aria-hidden="true"
-              />
-            </figure>
+        <div data-hero-reveal className="hero-laptop-column min-w-0">
+          <HeroLaptop reducedMotion={reducedMotion} />
+        </div>
+
+        <aside
+          data-hero-reveal
+          aria-label="Technology and developer status"
+          className="hero-system-panel min-w-0"
+        >
+          <div className="hero-system-block">
+            <p className="hero-system-heading">Core stack</p>
+            <ul className="hero-tech-list" aria-label="Core technologies">
+              {TECHNOLOGIES.map((technology) => (
+                <li key={technology}>{technology}</li>
+              ))}
+            </ul>
           </div>
 
-          <SystemStatusPanel />
-        </div>
+          <div className="hero-system-block">
+            <p className="hero-system-heading">
+              <span className="op-pulse" aria-hidden="true" />
+              System status
+            </p>
+            <dl className="hero-status-list">
+              {STATUS_ITEMS.map(({ label, value, accent }) => (
+                <div key={label} className="flex items-baseline justify-between gap-3">
+                  <dt>{label}</dt>
+                  <dd className={accent ? "text-[var(--color-accent)]" : undefined}>
+                    {value}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        </aside>
       </div>
 
       <div
@@ -187,7 +205,12 @@ interface HeroCTAProps {
   external?: boolean;
 }
 
-function HeroCTA({ href, children, primary = false, external = false }: HeroCTAProps) {
+function HeroCTA({
+  href,
+  children,
+  primary = false,
+  external = false,
+}: HeroCTAProps) {
   return (
     <a
       href={href}
@@ -204,43 +227,5 @@ function HeroCTA({ href, children, primary = false, external = false }: HeroCTAP
     >
       {children}
     </a>
-  );
-}
-
-function SystemStatusPanel() {
-  return (
-    <aside
-      data-hero-reveal
-      aria-label="Developer status"
-      className="mt-4 border-l border-[var(--color-border-strong)] py-1 pl-4 lg:absolute lg:-bottom-7 lg:-left-8 lg:mt-0"
-    >
-      <p
-        className="mb-3 text-[10px] uppercase tracking-[0.25em]"
-        style={{ fontFamily: "var(--font-mono)", color: "var(--color-accent)" }}
-      >
-        ● System status
-      </p>
-      <dl className="grid grid-cols-1 gap-x-8 gap-y-1.5 sm:grid-cols-2 lg:min-w-[21rem]">
-        {STATUS_ITEMS.map(({ label, value, accent }) => (
-          <div key={label} className="flex items-baseline justify-between gap-4">
-            <dt
-              className="text-[9px] uppercase tracking-[0.12em]"
-              style={{ fontFamily: "var(--font-mono)", color: "var(--color-text-muted)" }}
-            >
-              {label}
-            </dt>
-            <dd
-              className="text-right text-[9px] uppercase tracking-[0.1em]"
-              style={{
-                fontFamily: "var(--font-mono)",
-                color: accent ? "var(--color-accent)" : "var(--color-text-primary)",
-              }}
-            >
-              {value}
-            </dd>
-          </div>
-        ))}
-      </dl>
-    </aside>
   );
 }

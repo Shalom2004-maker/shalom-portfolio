@@ -30,6 +30,7 @@ interface Project {
 }
 
 type SlidePosition = "previous" | "active" | "next";
+type SlideInAnimation = "slide-in-left" | "slide-in-right";
 
 const PROJECTS: Project[] = [
   {
@@ -88,6 +89,8 @@ export function SelectedWork() {
   const [activeIndex, setActiveIndex] = useState(
     initialProjectIndex >= 0 ? initialProjectIndex : 0
   );
+  const [slideInAnimation, setSlideInAnimation] =
+    useState<SlideInAnimation | null>(null);
   const activeProject = PROJECTS[activeIndex];
   const previousIndex = (activeIndex - 1 + PROJECTS.length) % PROJECTS.length;
   const nextIndex = (activeIndex + 1) % PROJECTS.length;
@@ -114,9 +117,11 @@ export function SelectedWork() {
   ];
 
   const showPrevious = () => {
+    setSlideInAnimation("slide-in-right");
     setActiveIndex((index) => (index - 1 + PROJECTS.length) % PROJECTS.length);
   };
   const showNext = () => {
+    setSlideInAnimation("slide-in-left");
     setActiveIndex((index) => (index + 1) % PROJECTS.length);
   };
 
@@ -259,6 +264,9 @@ export function SelectedWork() {
               project={project}
               projectIndex={projectIndex}
               position={position}
+              slideInAnimation={
+                position === "active" ? slideInAnimation : null
+              }
             />
           ))}
         </div>
@@ -286,7 +294,19 @@ export function SelectedWork() {
               <button
                 key={project.id}
                 type="button"
-                onClick={() => setActiveIndex(index)}
+                onClick={() => {
+                  if (index === activeIndex) return;
+                  const forwardDistance =
+                    (index - activeIndex + PROJECTS.length) % PROJECTS.length;
+                  const backwardDistance =
+                    (activeIndex - index + PROJECTS.length) % PROJECTS.length;
+                  setSlideInAnimation(
+                    forwardDistance <= backwardDistance
+                      ? "slide-in-left"
+                      : "slide-in-right"
+                  );
+                  setActiveIndex(index);
+                }}
                 className={cn(
                   "work-carousel__indicator",
                   index === activeIndex && "work-carousel__indicator--active"
@@ -328,10 +348,12 @@ function ProjectCard({
   project,
   projectIndex,
   position,
+  slideInAnimation,
 }: {
   project: Project;
   projectIndex: number;
   position: SlidePosition;
+  slideInAnimation: SlideInAnimation | null;
 }) {
   const isActive = position === "active";
 
@@ -350,44 +372,66 @@ function ProjectCard({
       aria-label={`Project ${projectIndex + 1} of ${PROJECTS.length}: ${project.name}`}
       aria-roledescription="slide"
     >
-      <ProjectPreview project={project} projectIndex={projectIndex} />
+      <div
+        className={cn(
+          "work-carousel__card-content",
+          isActive &&
+            slideInAnimation &&
+            `work-carousel__card-content--${slideInAnimation}`
+        )}
+      >
+        <ProjectPreview project={project} projectIndex={projectIndex} />
 
-      {isActive && (
-        <div className="p-6 sm:p-8">
-          <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        {isActive && (
+          <div className="p-6 sm:p-8">
+            <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+              <h3
+                className="text-2xl font-semibold tracking-tight sm:text-3xl"
+                style={{
+                  fontFamily: "var(--font-display)",
+                  color: "var(--color-text-primary)",
+                }}
+              >
+                {project.name}
+              </h3>
+              <TagList tags={project.tags} />
+            </div>
+
+            <p
+              className="mb-6 max-w-2xl text-sm leading-relaxed sm:text-base"
+              style={{ color: "var(--color-text-muted)" }}
+            >
+              {project.description}
+            </p>
+
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+              <ProjectLink
+                href={project.demoUrl}
+                primary
+                label="Explore Project"
+              />
+              <ProjectLink
+                href={project.repoUrl}
+                label="Repository"
+                icon={
+                  <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+                }
+              />
+            </div>
+          </div>
+        )}
+
+        {!isActive && (
+          <div className="border-t border-[var(--color-border)] px-4 py-3">
             <h3
-              className="text-2xl font-semibold tracking-tight sm:text-3xl"
-              style={{
-                fontFamily: "var(--font-display)",
-                color: "var(--color-text-primary)",
-              }}
+              className="text-sm font-semibold tracking-tight text-[var(--color-text-primary)] sm:text-base"
+              style={{ fontFamily: "var(--font-display)" }}
             >
               {project.name}
             </h3>
-            <TagList tags={project.tags} />
           </div>
-
-          <p
-            className="mb-6 max-w-2xl text-sm leading-relaxed sm:text-base"
-            style={{ color: "var(--color-text-muted)" }}
-          >
-            {project.description}
-          </p>
-
-          <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
-            <ProjectLink
-              href={project.demoUrl}
-              primary
-              label="Explore Project"
-            />
-            <ProjectLink
-              href={project.repoUrl}
-              label="Repository"
-              icon={<ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />}
-            />
-          </div>
-        </div>
-      )}
+        )}
+      </div>
     </article>
   );
 }
@@ -434,12 +478,6 @@ function ProjectPreview({
               style={{ fontFamily: "var(--font-mono)" }}
             >
               Project {String(projectIndex + 1).padStart(2, "0")} · Preview pending
-            </span>
-            <span
-              className="px-3 text-lg font-medium tracking-tight text-[var(--color-text-primary)] sm:text-2xl"
-              style={{ fontFamily: "var(--font-display)" }}
-            >
-              {project.name}
             </span>
           </div>
         </>
