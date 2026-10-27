@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "open-props/easings";
 
 /* ─── Design tokens ─────────────────────────────────────────────────────────
    Dark Digital Laboratory — spec v0.1
@@ -63,6 +64,7 @@
 html {
   /* Smooth scrolling — disabled for reduced-motion users */
   scroll-behavior: smooth;
+  overflow-x: clip;
   color-scheme: dark;
 }
 
@@ -301,6 +303,259 @@ code, kbd, samp, pre {
 
   .op-hover-glow,
   .op-interactive-scale {
+    transition: none;
+  }
+}
+
+/* ─── Selected Work carousel ──────────────────────────────────────────────── */
+.work-carousel {
+  position: relative;
+  overflow: clip;
+  contain: paint;
+  perspective: 1400px;
+  touch-action: pan-y;
+}
+
+.work-carousel__stage {
+  display: grid;
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  contain: paint;
+}
+
+.work-carousel__slide {
+  box-sizing: border-box;
+  grid-area: 1 / 1;
+  width: min(440px, calc(100% - 40px));
+  justify-self: center;
+  align-self: center;
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+  transition:
+    transform 500ms var(--ease-3),
+    opacity 500ms var(--ease-3),
+    filter 500ms var(--ease-3),
+    border-color 500ms var(--ease-3),
+    box-shadow 500ms var(--ease-3);
+}
+
+.work-carousel__slide--active {
+  z-index: 2;
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+}
+
+.work-carousel__slide--active:hover {
+  transform: translate3d(0, -4px, 0) scale(1.005);
+  box-shadow: 0 0 16px rgba(77, 163, 255, 0.16);
+}
+
+.work-carousel__slide--previous,
+.work-carousel__slide--next {
+  z-index: 1;
+  opacity: 0.58;
+  filter: saturate(0.8);
+  pointer-events: none;
+}
+
+.work-carousel__slide--previous {
+  transform: translate3d(calc(-50% - 32px), 0, -80px) scale(0.87) rotateY(10deg);
+}
+
+.work-carousel__slide--next {
+  transform: translate3d(calc(50% + 32px), 0, -80px) scale(0.87) rotateY(-10deg);
+}
+
+.work-carousel__control {
+  display: inline-flex;
+  width: 2.75rem;
+  height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(77, 163, 255, 0.32);
+  color: var(--color-text-primary);
+  background: var(--color-surface);
+  transition:
+    color var(--duration-base) var(--ease-out-cubic),
+    border-color var(--duration-base) var(--ease-out-cubic),
+    background-color var(--duration-base) var(--ease-out-cubic),
+    transform var(--duration-base) var(--ease-3);
+}
+
+.work-carousel__control:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  background: var(--color-surface-elevated);
+  transform: translateY(-2px);
+}
+
+.work-carousel__control svg {
+  transition: transform var(--duration-base) var(--ease-3);
+}
+
+.work-carousel__control:hover:first-child svg {
+  transform: translateX(-2px);
+}
+
+.work-carousel__control:hover:last-child svg {
+  transform: translateX(2px);
+}
+
+.work-carousel__control:focus-visible,
+.work-carousel__indicator:focus-visible,
+.work-carousel:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 4px;
+}
+
+.work-carousel__indicator {
+  width: 0.5rem;
+  height: 0.5rem;
+  border: 1px solid rgba(77, 163, 255, 0.5);
+  border-radius: 9999px;
+  background: transparent;
+  transition:
+    width var(--duration-base) var(--ease-3),
+    background-color var(--duration-base) var(--ease-3),
+    border-color var(--duration-base) var(--ease-3);
+}
+
+.work-carousel__indicator--active {
+  width: 1.5rem;
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  animation: work-indicator-pulse 2.8s var(--ease-3) infinite;
+}
+
+@keyframes work-indicator-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.72;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 900px) {
+  .work-carousel__slide {
+    width: min(400px, calc(100% - 48px));
+  }
+
+  .work-carousel__slide--previous {
+    transform: translate3d(calc(-50% - 24px), 0, -60px) scale(0.86) rotateY(8deg);
+  }
+
+  .work-carousel__slide--next {
+    transform: translate3d(calc(50% + 24px), 0, -60px) scale(0.86) rotateY(-8deg);
+  }
+}
+
+@media (max-width: 640px) {
+  .work-carousel__slide {
+    width: min(440px, calc(100% - 64px));
+  }
+
+  .work-carousel__slide--previous {
+    transform: translate3d(calc(-50% - 30px), 0, -48px) scale(0.84) rotateY(7deg);
+  }
+
+  .work-carousel__slide--next {
+    transform: translate3d(calc(50% + 30px), 0, -48px) scale(0.84) rotateY(-7deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .work-carousel__slide,
+  .work-carousel__control,
+  .work-carousel__indicator,
+  .work-carousel__control svg {
+    transition: none;
+  }
+
+  .work-carousel__indicator--active {
+    animation: none;
+  }
+}
+
+/* ─── Orbital system — signature Hero visualization ─────────────────────────
+   Restrained, continuous motion for the orbital mechanism. Animation is
+   transform/opacity only, so it stays compositor-friendly. All motion is
+   neutralized under prefers-reduced-motion, preserving the static design.
+   ──────────────────────────────────────────────────────────────────────────── */
+
+@keyframes orbital-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes orbital-spin-reverse {
+  from { transform: rotate(360deg); }
+  to   { transform: rotate(0deg); }
+}
+
+@keyframes orbital-intro {
+  from { opacity: 0; transform: scale(0.94); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes orbital-breathe {
+  0%, 100% { opacity: 0.7; transform: scale(1); }
+  50%      { opacity: 1;   transform: scale(1.05); }
+}
+
+/* Entrance — short fade + slight scale, once on mount */
+.orbital-intro {
+  animation: orbital-intro 0.9s var(--ease-out-cubic) both;
+  animation-delay: 0.15s;
+}
+
+/* Pointer parallax — driven by --orbital-px / --orbital-py (−1…1) */
+.orbital-parallax {
+  transform:
+    translate3d(
+      calc(var(--orbital-px, 0) * 10px),
+      calc(var(--orbital-py, 0) * 10px),
+      0
+    )
+    rotate(calc(var(--orbital-px, 0) * 1.2deg));
+  transition: transform 500ms var(--ease-out-cubic);
+  will-change: transform;
+}
+
+/* Rotating SVG groups — orbit the viewBox centre */
+.orbital-spin-a,
+.orbital-spin-b,
+.orbital-spin-c,
+.orbital-hex,
+.orbital-tri,
+.orbital-breathe {
+  transform-box: view-box;
+  transform-origin: center;
+  will-change: transform;
+}
+
+.orbital-spin-a { animation: orbital-spin 96s linear infinite; }
+.orbital-spin-b { animation: orbital-spin-reverse 72s linear infinite; }
+.orbital-spin-c { animation: orbital-spin 54s linear infinite; }
+.orbital-hex   { animation: orbital-spin-reverse 44s linear infinite; }
+.orbital-tri   { animation: orbital-spin 34s linear infinite; }
+.orbital-breathe { animation: orbital-breathe 7s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .orbital-intro,
+  .orbital-spin-a,
+  .orbital-spin-b,
+  .orbital-spin-c,
+  .orbital-hex,
+  .orbital-tri,
+  .orbital-breathe {
+    animation: none;
+  }
+
+  .orbital-parallax {
+    transform: none;
     transition: none;
   }
 }

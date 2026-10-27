@@ -5,6 +5,7 @@ import { ArrowUpRight, GitBranch } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { animate, createTimeline, stagger } from "animejs";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { OrbitalSystem } from "@/components/ui/OrbitalSystem";
 import { cn } from "@/lib/cn";
 
 const STATUS_ITEMS = [
@@ -144,24 +145,27 @@ export function Hero() {
         </div>
 
         <div data-hero-reveal className="relative flex items-center justify-center lg:-mr-6 lg:pl-0">
-          <figure className="relative aspect-square w-full max-w-[42rem] overflow-hidden">
-            <Image
-              src="/images/HeroBG.png"
-              alt="Shalom Ndahiriwe, full-stack developer"
-              fill
-              priority
-              sizes="(min-width: 1024px) 48vw, 100vw"
-              className="object-contain object-center"
-            />
-            <div
-              className="pointer-events-none absolute inset-0"
-              style={{
-                background:
-                  "linear-gradient(180deg, transparent 62%, rgba(7,9,13,0.28) 100%)",
-              }}
-              aria-hidden="true"
-            />
-          </figure>
+          <div className="relative aspect-square w-full max-w-[42rem]">
+            <OrbitalSystem className="absolute inset-0 z-0" />
+            <figure className="relative z-10 h-full w-full overflow-hidden">
+              <Image
+                src="/images/HeroBG.png"
+                alt="Shalom Ndahiriwe, full-stack developer"
+                fill
+                priority
+                sizes="(min-width: 1024px) 48vw, 100vw"
+                className="object-contain object-center"
+              />
+              <div
+                className="pointer-events-none absolute inset-0"
+                style={{
+                  background:
+                    "linear-gradient(180deg, transparent 62%, rgba(7,9,13,0.28) 100%)",
+                }}
+                aria-hidden="true"
+              />
+            </figure>
+          </div>
 
           <SystemStatusPanel />
         </div>

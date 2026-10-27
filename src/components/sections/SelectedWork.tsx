@@ -1,7 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight, ExternalLink } from "lucide-react";
+import Image from "next/image";
+import {
+  ArrowRight,
+  ChevronLeft,
+  ChevronRight,
+  Code2,
+  ExternalLink,
+} from "lucide-react";
 import { animate, stagger } from "animejs";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { SectionHeading } from "@/components/ui/SectionHeading";
@@ -16,9 +23,13 @@ interface Project {
   tags: string[];
   demoUrl: string;
   repoUrl: string;
-  /** Featured projects span the full width */
+  /** Optional local screenshot path, to be added when a real preview is supplied. */
+  previewImage?: string;
+  /** Selects the initial project in the carousel. */
   featured?: boolean;
 }
+
+type SlidePosition = "previous" | "active" | "next";
 
 const PROJECTS: Project[] = [
   {
@@ -65,19 +76,49 @@ const PROJECTS: Project[] = [
 /**
  * SelectedWork — spec §11.
  *
- * Layout:
- *   - One large featured project card (full width).
- *   - Two secondary project cards in a 2-column grid below.
- *
- * Interactions:
- *   - Subtle pointer-reactive tilt on the featured card (mouse move).
- *   - Directional hover lift on secondary cards.
- *   - Scroll-triggered entrance animation (Anime.js, IntersectionObserver).
+ * A controlled, non-autoplaying carousel. Adjacent cards are visual previews;
+ * only the active project exposes its links to keyboard and assistive tech.
  */
 export function SelectedWork() {
   const reducedMotion = useReducedMotion();
   const sectionRef = useRef<HTMLElement>(null);
   const hasAnimated = useRef(false);
+  const touchStart = useRef<{ x: number; y: number } | null>(null);
+  const initialProjectIndex = PROJECTS.findIndex((project) => project.featured);
+  const [activeIndex, setActiveIndex] = useState(
+    initialProjectIndex >= 0 ? initialProjectIndex : 0
+  );
+  const activeProject = PROJECTS[activeIndex];
+  const previousIndex = (activeIndex - 1 + PROJECTS.length) % PROJECTS.length;
+  const nextIndex = (activeIndex + 1) % PROJECTS.length;
+  const slides: {
+    project: Project;
+    projectIndex: number;
+    position: SlidePosition;
+  }[] = [
+    {
+      project: PROJECTS[previousIndex],
+      projectIndex: previousIndex,
+      position: "previous",
+    },
+    {
+      project: activeProject,
+      projectIndex: activeIndex,
+      position: "active",
+    },
+    {
+      project: PROJECTS[nextIndex],
+      projectIndex: nextIndex,
+      position: "next",
+    },
+  ];
+
+  const showPrevious = () => {
+    setActiveIndex((index) => (index - 1 + PROJECTS.length) % PROJECTS.length);
+  };
+  const showNext = () => {
+    setActiveIndex((index) => (index + 1) % PROJECTS.length);
+  };
 
   // ── Scroll-triggered entrance ──────────────────────────────────────────────
   useEffect(() => {
@@ -108,7 +149,6 @@ export function SelectedWork() {
             });
           } catch (err) {
             // restore on error
-            // eslint-disable-next-line no-console
             console.error("SelectedWork animation failed:", err);
             targets.forEach((el) => {
               el.style.opacity = "1";
@@ -140,6 +180,48 @@ export function SelectedWork() {
     };
   }, [reducedMotion]);
 
+  const handleCarouselKeyDown = (
+    event: React.KeyboardEvent<HTMLDivElement>
+  ) => {
+    if (event.target !== event.currentTarget) return;
+
+    if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      showPrevious();
+    } else if (event.key === "ArrowRight") {
+      event.preventDefault();
+      showNext();
+    }
+  };
+
+  const handleTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
+    if (event.touches.length !== 1) {
+      touchStart.current = null;
+      return;
+    }
+
+    const touch = event.touches[0];
+    touchStart.current = { x: touch.clientX, y: touch.clientY };
+  };
+
+  const handleTouchEnd = (event: React.TouchEvent<HTMLDivElement>) => {
+    const start = touchStart.current;
+    touchStart.current = null;
+    if (!start) return;
+
+    const touch = event.changedTouches[0];
+    if (!touch) return;
+    const deltaX = touch.clientX - start.x;
+    const deltaY = touch.clientY - start.y;
+
+    if (Math.abs(deltaX) < 48 || Math.abs(deltaX) < Math.abs(deltaY) * 1.25) {
+      return;
+    }
+
+    if (deltaX > 0) showPrevious();
+    else showNext();
+  };
+
   return (
     <section
       id="work"
@@ -153,200 +235,221 @@ export function SelectedWork() {
           heading="Selected Work"
           subheading="Projects built with engineering quality and interaction design."
           as="h2"
+          id="work-heading"
         />
       </div>
 
-      {/* 2x2 project grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        {PROJECTS.map((project, i) => (
-          <div key={project.id} data-work-reveal>
-            {i === 0 ? (
-              <FeaturedCard project={project} reducedMotion={reducedMotion} />
-            ) : (
-              <SecondaryCard project={project} index={i} />
-            )}
+      <div
+        data-work-reveal
+        className="work-carousel"
+        role="region"
+        aria-label="Selected projects carousel. Focus this area and use the left and right arrow keys to change projects."
+        tabIndex={0}
+        onKeyDown={handleCarouselKeyDown}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+        onTouchCancel={() => {
+          touchStart.current = null;
+        }}
+      >
+        <div className="work-carousel__stage" aria-live="off">
+          {slides.map(({ project, projectIndex, position }) => (
+            <ProjectCard
+              key={project.id}
+              project={project}
+              projectIndex={projectIndex}
+              position={position}
+            />
+          ))}
+        </div>
+
+        <p className="sr-only" aria-live="polite" aria-atomic="true">
+          Project {activeIndex + 1} of {PROJECTS.length}: {activeProject.name}
+        </p>
+
+        <div className="mt-7 flex flex-wrap items-center justify-center gap-5">
+          <button
+            type="button"
+            onClick={showPrevious}
+            className="work-carousel__control"
+            aria-label={`Previous project: ${PROJECTS[previousIndex].name}`}
+          >
+            <ChevronLeft className="h-5 w-5" aria-hidden="true" />
+          </button>
+
+          <div
+            className="flex items-center gap-2"
+            role="group"
+            aria-label="Choose a project"
+          >
+            {PROJECTS.map((project, index) => (
+              <button
+                key={project.id}
+                type="button"
+                onClick={() => setActiveIndex(index)}
+                className={cn(
+                  "work-carousel__indicator",
+                  index === activeIndex && "work-carousel__indicator--active"
+                )}
+                aria-label={`Show project ${index + 1}: ${project.name}`}
+                aria-pressed={index === activeIndex}
+              />
+            ))}
           </div>
-        ))}
+
+          <span
+            className="min-w-[3.5rem] text-center text-xs tracking-[0.16em] text-[var(--color-text-muted)]"
+            style={{ fontFamily: "var(--font-mono)" }}
+            aria-hidden="true"
+          >
+            {String(activeIndex + 1).padStart(2, "0")} /{" "}
+            {String(PROJECTS.length).padStart(2, "0")}
+          </span>
+
+          <button
+            type="button"
+            onClick={showNext}
+            className="work-carousel__control"
+            aria-label={`Next project: ${PROJECTS[nextIndex].name}`}
+          >
+            <ChevronRight className="h-5 w-5" aria-hidden="true" />
+          </button>
+        </div>
+
+        <p className="mt-4 text-center text-[10px] uppercase tracking-[0.16em] text-[var(--color-text-muted)] md:hidden">
+          Swipe or use the controls to explore
+        </p>
       </div>
     </section>
   );
 }
 
-// ─── Featured card ────────────────────────────────────────────────────────────
-
-function FeaturedCard({
+function ProjectCard({
   project,
-  reducedMotion,
+  projectIndex,
+  position,
 }: {
   project: Project;
-  reducedMotion: boolean;
+  projectIndex: number;
+  position: SlidePosition;
 }) {
-  const cardRef = useRef<HTMLDivElement>(null);
-
-  // Pointer-reactive tilt
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (reducedMotion || !cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width - 0.5;
-    const y = (e.clientY - rect.top) / rect.height - 0.5;
-    animate(cardRef.current, {
-      rotateX: -y * 4,
-      rotateY: x * 4,
-      duration: 300,
-      ease: "outCubic",
-    });
-  };
-
-  const handleMouseLeave = () => {
-    if (reducedMotion || !cardRef.current) return;
-    animate(cardRef.current, {
-      rotateX: 0,
-      rotateY: 0,
-      duration: 500,
-      ease: "outCubic",
-    });
-  };
+  const isActive = position === "active";
 
   return (
-    <div
-      ref={cardRef}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      style={{ perspective: "1000px", transformStyle: "preserve-3d" }}
+    <article
       className={cn(
-        "op-mask-corner-cuts-angle-2 group relative overflow-hidden",
-        "border border-[rgba(77,163,255,0.28)]",
-        "bg-[var(--color-surface)]",
-        "transition-shadow duration-[var(--duration-base)]",
-        "hover:shadow-[0_0_12px_rgba(77,163,255,0.08)]",
-        "hover:border-[var(--color-accent)]"
+        "work-carousel__slide",
+        `work-carousel__slide--${position}`,
+        "op-mask-corner-cuts-angle-2 overflow-hidden border bg-[var(--color-surface)]",
+        isActive
+          ? "border-[var(--color-accent)] shadow-[0_0_14px_rgba(77,163,255,0.12)]"
+          : "border-[rgba(77,163,255,0.22)]"
       )}
+      role="group"
+      aria-hidden={!isActive}
+      aria-label={`Project ${projectIndex + 1} of ${PROJECTS.length}: ${project.name}`}
+      aria-roledescription="slide"
     >
-      {/* Image placeholder */}
-      <div
-        className="w-full aspect-[16/9] relative overflow-hidden"
-        style={{ backgroundColor: "var(--color-surface-elevated)" }}
-        aria-hidden="true"
-      >
-        {/* Grid overlay — dark laboratory texture */}
-        <div
-          className="absolute inset-0 opacity-20"
-          style={{
-            backgroundImage:
-              "linear-gradient(var(--color-border) 1px, transparent 1px), linear-gradient(90deg, var(--color-border) 1px, transparent 1px)",
-            backgroundSize: "40px 40px",
-          }}
-        />
-        {/* Project index label */}
-        <span
-          className="absolute top-5 left-5 text-xs tracking-[0.2em] uppercase"
-          style={{
-            fontFamily: "var(--font-mono)",
-            color: "var(--color-accent)",
-          }}
-        >
-          01
-        </span>
-      </div>
+      <ProjectPreview project={project} projectIndex={projectIndex} />
 
-      {/* Content */}
-      <div className="p-7 md:p-9">
-        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-4">
-          <h3
-            className="text-2xl md:text-3xl font-semibold tracking-tight"
-            style={{
-              fontFamily: "var(--font-display)",
-              color: "var(--color-text-primary)",
-            }}
+      {isActive && (
+        <div className="p-6 sm:p-8">
+          <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <h3
+              className="text-2xl font-semibold tracking-tight sm:text-3xl"
+              style={{
+                fontFamily: "var(--font-display)",
+                color: "var(--color-text-primary)",
+              }}
+            >
+              {project.name}
+            </h3>
+            <TagList tags={project.tags} />
+          </div>
+
+          <p
+            className="mb-6 max-w-2xl text-sm leading-relaxed sm:text-base"
+            style={{ color: "var(--color-text-muted)" }}
           >
-            {project.name}
-          </h3>
-          {/* Tech tags */}
-          <TagList tags={project.tags} />
-        </div>
+            {project.description}
+          </p>
 
-        <p
-          className="text-base leading-relaxed mb-7 max-w-2xl"
-          style={{ color: "var(--color-text-muted)" }}
-        >
-          {project.description}
-        </p>
-
-        <div className="flex flex-wrap items-center gap-4">
-          <ProjectLink href={project.demoUrl} primary label="Explore Project" />
-          <ProjectLink href={project.repoUrl} label="Repository" icon={<ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />} />
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+            <ProjectLink
+              href={project.demoUrl}
+              primary
+              label="Explore Project"
+            />
+            <ProjectLink
+              href={project.repoUrl}
+              label="Repository"
+              icon={<ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />}
+            />
+          </div>
         </div>
-      </div>
-    </div>
+      )}
+    </article>
   );
 }
 
-// ─── Secondary card ───────────────────────────────────────────────────────────
-
-function SecondaryCard({ project, index }: { project: Project; index: number }) {
-  const [hovered, setHovered] = useState(false);
-
+function ProjectPreview({
+  project,
+  projectIndex,
+}: {
+  project: Project;
+  projectIndex: number;
+}) {
   return (
     <div
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      className={cn(
-        "op-mask-corner-cuts-angle-1 group relative flex h-full flex-col overflow-hidden",
-        "border border-[rgba(77,163,255,0.24)]",
-        "bg-[var(--color-surface)]",
-        "transition-all duration-[var(--duration-base)]",
-        hovered && "border-[var(--color-accent)] -translate-y-1 shadow-[0_0_12px_rgba(77,163,255,0.08)]"
-      )}
+      className="relative flex aspect-[16/9] w-full items-center justify-center overflow-hidden bg-[var(--color-surface-elevated)]"
+      aria-hidden="true"
     >
-      {/* Image placeholder */}
-      <div
-        className="w-full aspect-video relative overflow-hidden"
-        style={{ backgroundColor: "var(--color-surface-elevated)" }}
-        aria-hidden="true"
-      >
-        <div
-          className="absolute inset-0 opacity-10"
-          style={{
-            backgroundImage:
-              "linear-gradient(var(--color-border) 1px, transparent 1px), linear-gradient(90deg, var(--color-border) 1px, transparent 1px)",
-            backgroundSize: "32px 32px",
-          }}
+      {project.previewImage ? (
+        <Image
+          src={project.previewImage}
+          alt=""
+          fill
+          sizes="(min-width: 1280px) 800px, (min-width: 641px) 76vw, 86vw"
+          className="object-cover"
         />
-        <span
-          className="absolute top-4 left-4 text-xs tracking-[0.2em] uppercase"
-          style={{
-            fontFamily: "var(--font-mono)",
-            color: "var(--color-accent)",
-          }}
-        >
-          {String(index + 2).padStart(2, "0")}
-        </span>
-      </div>
-
-      {/* Content */}
-      <div className="flex flex-col flex-1 p-6">
-        <TagList tags={project.tags} className="mb-3" />
-        <h3
-          className="text-xl font-semibold tracking-tight mb-2"
-          style={{
-            fontFamily: "var(--font-display)",
-            color: "var(--color-text-primary)",
-          }}
-        >
-          {project.name}
-        </h3>
-        <p
-          className="text-sm leading-relaxed mb-6 flex-1"
-          style={{ color: "var(--color-text-muted)" }}
-        >
-          {project.description}
-        </p>
-
-        <div className="flex items-center gap-4 mt-auto">
-          <ProjectLink href={project.demoUrl} primary label="View Project" small />
-          <ProjectLink href={project.repoUrl} label="Repo" small icon={<ExternalLink className="w-3 h-3" aria-hidden="true" />} />
-        </div>
-      </div>
+      ) : (
+        <>
+          <div
+            className="absolute inset-0 opacity-20"
+            style={{
+              backgroundImage:
+                "linear-gradient(var(--color-border) 1px, transparent 1px), linear-gradient(90deg, var(--color-border) 1px, transparent 1px)",
+              backgroundSize: "40px 40px",
+            }}
+          />
+          <div className="absolute inset-5 border border-[rgba(77,163,255,0.18)] sm:inset-8" />
+          <div className="relative flex flex-col items-center gap-3 text-center">
+            <Code2
+              className="h-8 w-8 text-[var(--color-accent)] opacity-80 sm:h-10 sm:w-10"
+              strokeWidth={1.25}
+              aria-hidden="true"
+            />
+            <span
+              className="text-[9px] uppercase tracking-[0.24em] text-[var(--color-text-muted)] sm:text-[10px]"
+              style={{ fontFamily: "var(--font-mono)" }}
+            >
+              Project {String(projectIndex + 1).padStart(2, "0")} · Preview pending
+            </span>
+            <span
+              className="px-3 text-lg font-medium tracking-tight text-[var(--color-text-primary)] sm:text-2xl"
+              style={{ fontFamily: "var(--font-display)" }}
+            >
+              {project.name}
+            </span>
+          </div>
+        </>
+      )}
+      <span
+        className="absolute right-5 top-5 text-[10px] tracking-[0.18em] text-[var(--color-accent)]"
+        style={{ fontFamily: "var(--font-mono)" }}
+      >
+        {project.id.toUpperCase()}
+      </span>
     </div>
   );
 }
