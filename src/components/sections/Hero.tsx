@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import Image from "next/image";
+import { useCallback, useEffect, useRef } from "react";
 import { ArrowUpRight, GitBranch } from "lucide-react";
 import { createTimeline, stagger } from "animejs";
-import { HeroLaptop } from "@/components/ui/HeroLaptop";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { cn } from "@/lib/cn";
 
@@ -20,12 +20,27 @@ const STATUS_ITEMS = [
 const REVEAL_SELECTOR = "[data-hero-reveal]";
 
 /**
- * Hero — developer introduction framed by a CSS-built laptop and system readout.
- * Content remains visible by default; Anime.js only coordinates its entrance.
+ * Cinematic Hero scene. The supplied laptop artwork anchors the composition;
+ * HTML identity and system panels remain independently readable above it.
  */
 export function Hero() {
   const reducedMotion = useReducedMotion();
   const sectionRef = useRef<HTMLElement>(null);
+  const pointerQueryRef = useRef<MediaQueryList | null>(null);
+  const pointerFrame = useRef(0);
+  const pointerX = useRef(0);
+  const pointerY = useRef(0);
+
+  const resetParallax = useCallback(() => {
+    const section = sectionRef.current;
+    if (pointerFrame.current) {
+      window.cancelAnimationFrame(pointerFrame.current);
+      pointerFrame.current = 0;
+    }
+    section?.removeAttribute("data-hero-parallax");
+    section?.style.setProperty("--hero-pointer-x", "0");
+    section?.style.setProperty("--hero-pointer-y", "0");
+  }, []);
 
   useEffect(() => {
     if (reducedMotion || !sectionRef.current) return;
@@ -41,18 +56,18 @@ export function Hero() {
         targets,
         {
           opacity: [0, 1],
-          translateY: [18, 0],
-          duration: 520,
-          delay: stagger(70),
+          translateY: [16, 0],
+          duration: 540,
+          delay: stagger(90),
         },
-        120
+        100
       );
       const fallback = window.setTimeout(() => {
         targets.forEach((element) => {
           element.style.opacity = "1";
           element.style.transform = "none";
         });
-      }, 1200);
+      }, 1400);
 
       return () => {
         window.clearTimeout(fallback);
@@ -67,78 +82,98 @@ export function Hero() {
     }
   }, [reducedMotion]);
 
+  useEffect(() => {
+    if (reducedMotion) {
+      pointerQueryRef.current = null;
+      resetParallax();
+      return;
+    }
+
+    pointerQueryRef.current = window.matchMedia(
+      "(min-width: 1024px) and (hover: hover) and (pointer: fine)"
+    );
+    const handleBlur = () => resetParallax();
+    window.addEventListener("blur", handleBlur);
+
+    return () => {
+      window.removeEventListener("blur", handleBlur);
+      pointerQueryRef.current = null;
+      resetParallax();
+    };
+  }, [reducedMotion, resetParallax]);
+
+  const handlePointerMove = (event: React.PointerEvent<HTMLElement>) => {
+    if (
+      reducedMotion ||
+      event.pointerType === "touch" ||
+      !pointerQueryRef.current?.matches
+    ) {
+      return;
+    }
+
+    const section = sectionRef.current;
+    if (!section) return;
+    const bounds = section.getBoundingClientRect();
+    if (!bounds.width || !bounds.height) return;
+
+    pointerX.current = Math.max(
+      -1,
+      Math.min(1, (event.clientX - bounds.left - bounds.width / 2) / (bounds.width / 2))
+    );
+    pointerY.current = Math.max(
+      -1,
+      Math.min(1, (event.clientY - bounds.top - bounds.height / 2) / (bounds.height / 2))
+    );
+
+    if (!pointerFrame.current) {
+      pointerFrame.current = window.requestAnimationFrame(() => {
+        pointerFrame.current = 0;
+        section.style.setProperty("--hero-pointer-x", pointerX.current.toFixed(3));
+        section.style.setProperty("--hero-pointer-y", pointerY.current.toFixed(3));
+        section.setAttribute("data-hero-parallax", "active");
+      });
+    }
+  };
+
   return (
     <section
       ref={sectionRef}
       aria-label="Introduction"
-      className={cn(
-        "relative mx-auto flex min-h-[calc(100svh-4rem)] w-full max-w-7xl",
-        "items-center px-6 py-12 md:px-10 md:py-16 xl:py-20"
-      )}
+      className="hero-cinematic relative mx-auto min-h-[calc(100svh-4rem)] w-full max-w-7xl px-6 py-10 md:px-10 md:py-12"
+      onPointerMove={handlePointerMove}
+      onPointerLeave={resetParallax}
     >
-      <div className="hero-layout grid w-full items-center gap-x-8 gap-y-10 xl:gap-x-10">
-        <div className="hero-intro relative z-10 flex flex-col items-start">
-          <p
-            data-hero-reveal
-            className="mb-5 text-[10px] uppercase tracking-[0.28em]"
-            style={{
-              fontFamily: "var(--font-mono)",
-              color: "var(--color-accent)",
-            }}
-          >
-            01 / Web development
-          </p>
+      <div className="hero-scene">
+        <div
+          className="hero-artwork-layer"
+          data-hero-reveal
+          aria-hidden="true"
+        >
+          <div className="hero-artwork-parallax">
+            <Image
+              src="/images/Neon%20Developer%20Laptop%20Orbit.png"
+              alt=""
+              width={1536}
+              height={1024}
+              priority
+              sizes="(min-width: 1280px) 90vw, (min-width: 768px) 100vw, 100vw"
+              className="hero-artwork"
+            />
+          </div>
+          <div className="hero-artwork-vignette" />
+        </div>
 
-          <p
-            data-hero-reveal
-            className="mb-4 text-xs font-medium uppercase tracking-[0.2em]"
-            style={{
-              fontFamily: "var(--font-mono)",
-              color: "var(--color-text-muted)",
-            }}
-          >
-            Full-stack developer
-          </p>
-
-          <h1
-            data-hero-reveal
-            className={cn(
-              "max-w-3xl text-[clamp(3rem,7vw,6.6rem)]",
-              "font-semibold uppercase leading-[0.9] tracking-[-0.055em]"
-            )}
-            style={{
-              fontFamily: "var(--font-display)",
-              color: "var(--color-text-primary)",
-            }}
-          >
-            Shalom Ndahiriwe
-          </h1>
-
-          <p
-            data-hero-reveal
-            className="mt-7 text-[clamp(1.35rem,2.7vw,2.25rem)] font-medium uppercase leading-tight tracking-[-0.025em]"
-            style={{
-              fontFamily: "var(--font-display)",
-              color: "var(--color-text-primary)",
-            }}
-          >
-            I build web experiences.
-          </p>
-
-          <p
-            data-hero-reveal
-            className="mt-6 max-w-xl text-base leading-relaxed md:text-lg"
-            style={{ color: "var(--color-text-muted)" }}
-          >
+        <div className="hero-identity-layer" data-hero-reveal>
+          <p className="hero-eyebrow">01 / Web development</p>
+          <p className="hero-role">Full-stack developer</p>
+          <h1 className="hero-name">Shalom Ndahiriwe</h1>
+          <p className="hero-headline">I build web experiences.</p>
+          <p className="hero-description">
             I&apos;m a web developer who builds thoughtful, functional web
             applications with modern technologies, clean interfaces, and
             attention to the details that make software feel complete.
           </p>
-
-          <div
-            data-hero-reveal
-            className="mt-9 flex flex-wrap items-center gap-3"
-          >
+          <div className="hero-actions">
             <HeroCTA href="#work" primary>
               Explore work
               <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
@@ -149,37 +184,38 @@ export function Hero() {
               <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
             </HeroCTA>
           </div>
-
-        </div>
-
-        <div data-hero-reveal className="hero-laptop-column min-w-0">
-          <HeroLaptop reducedMotion={reducedMotion} />
         </div>
 
         <aside
           data-hero-reveal
-          aria-label="Technology and developer status"
-          className="hero-system-panel min-w-0"
+          aria-label="Core technologies"
+          className="hero-glass-panel hero-tech-panel"
         >
-          <div className="hero-system-block">
-            <p className="hero-system-heading">Core stack</p>
-            <ul className="hero-tech-list" aria-label="Core technologies">
+          <div className="hero-panel-parallax">
+            <p className="hero-panel-label">Core stack</p>
+            <ul className="hero-tech-list">
               {TECHNOLOGIES.map((technology) => (
                 <li key={technology}>{technology}</li>
               ))}
             </ul>
           </div>
+        </aside>
 
-          <div className="hero-system-block">
-            <p className="hero-system-heading">
+        <aside
+          data-hero-reveal
+          aria-label="Developer status"
+          className="hero-glass-panel hero-status-panel"
+        >
+          <div className="hero-panel-parallax">
+            <p className="hero-panel-label">
               <span className="op-pulse" aria-hidden="true" />
               System status
             </p>
             <dl className="hero-status-list">
               {STATUS_ITEMS.map(({ label, value, accent }) => (
-                <div key={label} className="flex items-baseline justify-between gap-3">
+                <div key={label}>
                   <dt>{label}</dt>
-                  <dd className={accent ? "text-[var(--color-accent)]" : undefined}>
+                  <dd className={accent ? "hero-status-online" : undefined}>
                     {value}
                   </dd>
                 </div>
