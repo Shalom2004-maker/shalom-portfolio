@@ -1,11 +1,5 @@
-"use client";
-
-import { useEffect, useRef } from "react";
 import Image from "next/image";
-import { animate, stagger } from "animejs";
-import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { cn } from "@/lib/cn";
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
@@ -18,190 +12,109 @@ const CURRENTLY = [
 // ─── Component ────────────────────────────────────────────────────────────────
 
 /**
- * About — spec §12.
- *
- * Layout (desktop):
- *   Left col (wider): Section heading + editorial bio paragraphs + journey.
- *   Right col: CURRENTLY panel (glass surface) + accent detail.
- *
- * The asymmetric split (7:5 columns) gives an editorial, non-template feel.
+ * About — editorial biography with a naturally proportioned portrait.
  */
 export function About() {
-  const reducedMotion = useReducedMotion();
-  const sectionRef = useRef<HTMLElement>(null);
-  const hasAnimated = useRef(false);
-
-  useEffect(() => {
-    if (reducedMotion || !sectionRef.current) return;
-
-    const targets = Array.from(sectionRef.current.querySelectorAll<HTMLElement>("[data-about-reveal]"));
-
-    if (!targets.length) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && !hasAnimated.current) {
-          hasAnimated.current = true;
-          try {
-            targets.forEach((el) => {
-              el.style.opacity = "0";
-              el.style.transform = "translateY(28px)";
-            });
-            requestAnimationFrame(() => {
-              animate(targets, {
-                opacity: [0, 1],
-                translateY: [28, 0],
-                duration: 650,
-                delay: stagger(90),
-                ease: "outCubic",
-              });
-            });
-          } catch (err) {
-            // Restore if animation setup fails
-            // eslint-disable-next-line no-console
-            console.error("About animation failed:", err);
-            targets.forEach((el) => {
-              el.style.opacity = "1";
-              el.style.transform = "none";
-            });
-          }
-
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    observer.observe(sectionRef.current);
-
-    const fallback = window.setTimeout(() => {
-      const targetsNow = Array.from(sectionRef.current?.querySelectorAll<HTMLElement>("[data-about-reveal]") ?? []);
-      targetsNow.forEach((el) => {
-        if (el.style.opacity === "0") {
-          el.style.opacity = "1";
-          el.style.transform = "none";
-        }
-      });
-    }, 1200);
-
-    return () => { clearTimeout(fallback); observer.disconnect(); };
-  }, [reducedMotion]);
-
   return (
     <section
       id="about"
-      ref={sectionRef}
       aria-labelledby="about-heading"
-      className="max-w-7xl mx-auto w-full px-6 md:px-10 py-24 md:py-32"
+      className="mx-auto w-full max-w-[1200px] px-6 py-24 md:px-10 md:py-32"
     >
-      {/* Top border rule */}
       <div
-        className="mb-16 h-px w-full"
+        className="mb-12 h-px w-full md:mb-16"
         style={{ backgroundColor: "var(--color-border)" }}
         aria-hidden="true"
       />
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
-
-        {/* ── Left column — bio + journey ── */}
-        <div className="lg:col-span-7 flex flex-col gap-8">
-          <div data-about-reveal>
-            <SectionHeading index="03" heading="About" as="h2" />
-          </div>
-
-          {/* Editorial bio */}
-          <div className="flex flex-col gap-5">
-            <p
-              data-about-reveal
-              className="text-lg leading-relaxed"
-              style={{ color: "var(--color-text-primary)" }}
-            >
-              I’m a B.Tech (IT) student and full-stack developer who enjoys building software to solve practical problems. I’m interested in understanding how systems work, learning new technologies, and turning what I learn into working applications.
-            </p>
-            <p
-              data-about-reveal
-              className="text-base leading-relaxed"
-              style={{ color: "var(--color-text-muted)" }}
-            >
-              I like going deeper than simply making something work. I want to understand the logic, concepts, and systems behind what I build. When I encounter something difficult, I research it, learn from different sources, put the knowledge into practice, and observe the results.
-            </p>
-            <p
-              data-about-reveal
-              className="text-base leading-relaxed"
-              style={{ color: "var(--color-text-muted)" }}
-            >
-              My approach is simple: understand the problem, learn what is required, build the solution, test it, and improve it.
-            </p>
-          </div>
-
-          {/* Subtle accent rule + index label */}
-          <div
-            data-about-reveal
-            className="flex items-center gap-4 mt-2"
-          >
-            <div
-              className="h-px flex-1"
-              style={{ backgroundColor: "var(--color-border)" }}
-              aria-hidden="true"
-            />
-            <span
-              className="text-xs tracking-[0.2em] uppercase shrink-0"
-              style={{
-                fontFamily: "var(--font-mono)",
-                color: "var(--color-text-muted)",
-              }}
-              aria-hidden="true"
-            >
-              Est. 2028
-            </span>
-          </div>
-        </div>
-
-        {/* ── Right column — CURRENTLY panel + portrait placeholder ── */}
-        <div className="lg:col-span-5 flex flex-col gap-6">
-
-          {/* Portrait */}
-          <div
-            data-about-reveal
-            className="op-mask-corner-cuts-angle-2 relative aspect-[4/5] w-full overflow-hidden border border-[rgba(77,163,255,0.28)]"
+      <div className="grid grid-cols-1 items-start gap-y-12 lg:grid-cols-[minmax(0,0.42fr)_minmax(0,0.58fr)] lg:gap-x-14">
+        <div>
+          <SectionHeading
+            index="03"
+            heading="About"
+            as="h2"
+            id="about-heading"
+          />
+          <h3
+            className="mt-7 max-w-[24ch] text-[clamp(2.25rem,3.8vw,3.5rem)] font-semibold leading-[1.08] tracking-[-0.04em]"
             style={{
-              backgroundColor: "var(--color-surface)",
-              border: "1px solid var(--color-border)",
+              fontFamily: "var(--font-display)",
+              color: "var(--color-text-primary)",
             }}
           >
-            <Image
-              src="/images/Portrait.png"
-              alt="Shalom Ndahiriwe"
-              fill
-              sizes="(min-width: 1024px) 41.67vw, 100vw"
-              className="object-cover"
-            />
-          </div>
+            I enjoy building software to solve practical problems.
+          </h3>
+        </div>
 
-          {/* CURRENTLY panel — glass surface per spec §8 */}
-          <div
-            data-about-reveal
-            className={cn(
-              "op-mask-corner-cuts-angle-1 border border-[rgba(77,163,255,0.24)]",
-              "bg-[rgba(13,17,23,0.7)] backdrop-blur-sm",
-              "p-6"
-            )}
+        <div className="flex max-w-2xl flex-col gap-5 lg:pt-[6.5rem]">
+          <p
+            className="text-base leading-[1.85] sm:text-lg"
+            style={{ color: "var(--color-text-primary)" }}
           >
-            <p
-              className="text-[10px] tracking-[0.25em] uppercase mb-4"
+            I’m a B.Tech (IT) student and full-stack developer interested in
+            understanding how systems work, learning new technologies, and
+            turning what I learn into working applications.
+          </p>
+          <p
+            className="text-base leading-[1.85]"
+            style={{ color: "var(--color-text-muted)" }}
+          >
+            I like going deeper than simply making something work. I want to
+            understand the logic, concepts, and systems behind what I build.
+            When I encounter something difficult, I research it, learn from
+            different sources, put the knowledge into practice, and observe the
+            results.
+          </p>
+          <p
+            className="text-base leading-[1.85]"
+            style={{ color: "var(--color-text-muted)" }}
+          >
+            My approach is simple: understand the problem, learn what is
+            required, build the solution, test it, and improve it.
+          </p>
+        </div>
+      </div>
+
+      <div
+        className="mt-16 grid grid-cols-1 items-start gap-8 border-t pt-8 md:mt-[4.25rem] md:grid-cols-[minmax(0,0.32fr)_minmax(0,0.68fr)] md:items-center md:gap-x-10 md:pt-10"
+        style={{ borderColor: "var(--color-border)" }}
+      >
+        <figure className="w-[190px] max-w-full md:w-full md:max-w-[210px] lg:max-w-[270px] xl:max-w-[310px]">
+          <Image
+            src="/images/Portrait.png"
+            alt="Shalom Ndahiriwe"
+            width={941}
+            height={1672}
+            sizes="(min-width: 1280px) 310px, (min-width: 1024px) 270px, (min-width: 768px) 210px, 190px"
+            className="block h-auto w-full border border-[var(--color-border)] object-contain"
+          />
+        </figure>
+
+        <div className="flex max-w-xl flex-col gap-8 md:justify-self-start">
+          <p
+            className="text-xs tracking-[0.16em] uppercase"
+            style={{
+              fontFamily: "var(--font-mono)",
+              color: "var(--color-text-muted)",
+            }}
+          >
+            EXPECTED GRADUATION · MAY 2028
+          </p>
+          <div className="border-t border-[var(--color-border)] pt-6">
+            <h3
+              className="mb-5 text-sm tracking-[0.16em] uppercase"
               style={{
                 fontFamily: "var(--font-mono)",
                 color: "var(--color-accent)",
               }}
-              aria-hidden="true"
             >
-              ● Currently
-            </p>
-            <dl className="flex flex-col gap-3">
+              Currently
+            </h3>
+            <dl className="grid max-w-xl grid-cols-1 gap-x-8 gap-y-5 sm:grid-cols-2">
               {CURRENTLY.map(({ label, value }) => (
-                <div key={label} className="flex flex-col gap-0.5">
+                <div key={label} className="flex flex-col gap-2">
                   <dt
-                    className="text-[10px] tracking-widest uppercase"
+                    className="text-xs tracking-[0.14em] uppercase"
                     style={{
                       fontFamily: "var(--font-mono)",
                       color: "var(--color-text-muted)",
@@ -210,7 +123,7 @@ export function About() {
                     {label}
                   </dt>
                   <dd
-                    className="text-sm font-medium"
+                    className="text-base font-medium leading-snug"
                     style={{ color: "var(--color-text-primary)" }}
                   >
                     {value}
