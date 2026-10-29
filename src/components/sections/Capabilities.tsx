@@ -39,7 +39,7 @@ export function Capabilities() {
     <section
       id="capabilities"
       aria-labelledby="capabilities-heading"
-      className="mx-auto w-full max-w-[1200px] px-6 py-24 md:px-10 md:py-32"
+      className="mx-auto w-full max-w-[1200px] px-6 pt-24 pb-16 md:px-10 md:pt-32 md:pb-20"
       style={{ backgroundColor: "var(--color-bg)" }}
     >
       <div
@@ -59,7 +59,7 @@ export function Capabilities() {
       </div>
 
       <ul
-        className="grid grid-cols-2 gap-x-4 gap-y-9 sm:grid-cols-3 sm:gap-x-6 md:grid-cols-4 md:gap-x-8 md:gap-y-11 xl:grid-cols-6"
+        className="grid grid-cols-2 gap-x-4 gap-y-9 sm:grid-cols-3 sm:gap-x-6 md:grid-cols-4 md:gap-x-8 md:gap-y-11 xl:grid-cols-5"
         aria-label="Technologies and tools"
       >
         {TECHNOLOGIES.map((technology) => (
@@ -69,7 +69,7 @@ export function Capabilities() {
 
       <section
         aria-labelledby="capabilities-learning-heading"
-        className="mt-14 max-w-[680px] border-t pt-8 md:mt-16 md:pt-9"
+        className="mt-14 max-w-[460px] border-t pt-8 md:mt-16 md:pt-9"
         style={{ borderColor: "var(--color-border)" }}
       >
         <h3
@@ -83,7 +83,7 @@ export function Capabilities() {
           Currently Learning
         </h3>
         <ul
-          className="grid grid-cols-3 gap-x-4 gap-y-7 sm:gap-x-8"
+          className="grid grid-cols-3 gap-x-4 gap-y-7 sm:gap-x-6"
           aria-label="Currently learning technologies"
         >
           {LEARNING_TECHNOLOGIES.map((technology) => (
@@ -106,13 +106,13 @@ function TechnologyItem({ technology }: { technology: Technology }) {
           width={48}
           height={48}
           sizes="(min-width: 1280px) 48px, (min-width: 640px) 44px, 40px"
-          className={`h-10 w-10 shrink-0 object-contain sm:h-11 sm:w-11 xl:h-12 xl:w-12 ${
+          className={`h-10 w-10 shrink-0 object-contain sm:h-12 sm:w-12 xl:h-[52px] xl:w-[52px] ${
             technology.logo === "github" || technology.logo === "nextjs"
               ? "rounded-full bg-white p-1"
               : ""
           }`}
         />
-        <span className="block max-w-full text-[13px] leading-snug text-[var(--color-text-muted)] sm:text-sm">
+        <span className="block max-w-full text-sm leading-snug text-[var(--color-text-muted)] sm:text-[15px]">
           {technology.name}
         </span>
       </div>
