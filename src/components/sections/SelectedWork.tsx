@@ -393,17 +393,15 @@ function ProjectCard({
       aria-label={`Project ${projectIndex + 1} of ${PROJECTS.length}: ${project.name}`}
       aria-roledescription="slide"
     >
-      <ProjectPreview project={project} projectIndex={projectIndex} />
+      <ProjectPreview project={project} />
     </article>
   );
 }
 
 function ProjectPreview({
   project,
-  projectIndex,
 }: {
   project: Project;
-  projectIndex: number;
 }) {
   return (
     <div
