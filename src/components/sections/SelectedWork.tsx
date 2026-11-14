@@ -264,11 +264,37 @@ export function SelectedWork() {
               project={project}
               projectIndex={projectIndex}
               position={position}
-              slideInAnimation={
-                position === "active" ? slideInAnimation : null
-              }
             />
           ))}
+        </div>
+
+        <div
+          key={activeProject.id}
+          className={cn(
+            "work-carousel__information",
+            slideInAnimation &&
+              `work-carousel__information--${slideInAnimation}`
+          )}
+        >
+          <div className="work-carousel__information-heading">
+            <h3>{activeProject.name}</h3>
+            <TagList tags={activeProject.tags} />
+          </div>
+
+          <p>{activeProject.description}</p>
+
+          <div className="work-carousel__actions">
+            <ProjectLink
+              href={activeProject.demoUrl}
+              primary
+              label="Explore Project"
+            />
+            <ProjectLink
+              href={activeProject.repoUrl}
+              label="Repository"
+              icon={<ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />}
+            />
+          </div>
         </div>
 
         <p className="sr-only" aria-live="polite" aria-atomic="true">
@@ -348,12 +374,10 @@ function ProjectCard({
   project,
   projectIndex,
   position,
-  slideInAnimation,
 }: {
   project: Project;
   projectIndex: number;
   position: SlidePosition;
-  slideInAnimation: SlideInAnimation | null;
 }) {
   const isActive = position === "active";
 
@@ -362,76 +386,14 @@ function ProjectCard({
       className={cn(
         "work-carousel__slide",
         `work-carousel__slide--${position}`,
-        "op-mask-corner-cuts-angle-2 overflow-hidden border bg-[var(--color-surface)]",
-        isActive
-          ? "border-[var(--color-accent)] shadow-[0_0_14px_rgba(77,163,255,0.12)]"
-          : "border-[rgba(77,163,255,0.22)]"
+        "overflow-hidden border bg-[var(--color-surface)]"
       )}
       role="group"
       aria-hidden={!isActive}
       aria-label={`Project ${projectIndex + 1} of ${PROJECTS.length}: ${project.name}`}
       aria-roledescription="slide"
     >
-      <div
-        className={cn(
-          "work-carousel__card-content",
-          isActive &&
-            slideInAnimation &&
-            `work-carousel__card-content--${slideInAnimation}`
-        )}
-      >
-        <ProjectPreview project={project} projectIndex={projectIndex} />
-
-        {isActive && (
-          <div className="p-6 sm:p-8">
-            <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-              <h3
-                className="text-2xl font-semibold tracking-tight sm:text-3xl"
-                style={{
-                  fontFamily: "var(--font-display)",
-                  color: "var(--color-text-primary)",
-                }}
-              >
-                {project.name}
-              </h3>
-              <TagList tags={project.tags} />
-            </div>
-
-            <p
-              className="mb-6 max-w-2xl text-sm leading-relaxed sm:text-base"
-              style={{ color: "var(--color-text-muted)" }}
-            >
-              {project.description}
-            </p>
-
-            <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
-              <ProjectLink
-                href={project.demoUrl}
-                primary
-                label="Explore Project"
-              />
-              <ProjectLink
-                href={project.repoUrl}
-                label="Repository"
-                icon={
-                  <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
-                }
-              />
-            </div>
-          </div>
-        )}
-
-        {!isActive && (
-          <div className="border-t border-[var(--color-border)] px-4 py-3">
-            <h3
-              className="text-sm font-semibold tracking-tight text-[var(--color-text-primary)] sm:text-base"
-              style={{ fontFamily: "var(--font-display)" }}
-            >
-              {project.name}
-            </h3>
-          </div>
-        )}
-      </div>
+      <ProjectPreview project={project} projectIndex={projectIndex} />
     </article>
   );
 }
@@ -457,30 +419,20 @@ function ProjectPreview({
           className="object-cover"
         />
       ) : (
-        <>
-          <div
-            className="absolute inset-0 opacity-20"
-            style={{
-              backgroundImage:
-                "linear-gradient(var(--color-border) 1px, transparent 1px), linear-gradient(90deg, var(--color-border) 1px, transparent 1px)",
-              backgroundSize: "40px 40px",
-            }}
-          />
-          <div className="absolute inset-5 border border-[rgba(77,163,255,0.18)] sm:inset-8" />
-          <div className="relative flex flex-col items-center gap-3 text-center">
+        <div className="work-carousel__fallback">
+          <div className="work-carousel__fallback-grid" />
+          <div className="relative flex flex-col items-center gap-2 text-center">
             <Code2
               className="h-8 w-8 text-[var(--color-accent)] opacity-80 sm:h-10 sm:w-10"
               strokeWidth={1.25}
               aria-hidden="true"
             />
-            <span
-              className="text-[9px] uppercase tracking-[0.24em] text-[var(--color-text-muted)] sm:text-[10px]"
-              style={{ fontFamily: "var(--font-mono)" }}
-            >
-              Project {String(projectIndex + 1).padStart(2, "0")} · Preview pending
+            <span className="work-carousel__fallback-name">{project.name}</span>
+            <span className="work-carousel__fallback-caption">
+              Preview pending
             </span>
           </div>
-        </>
+        </div>
       )}
       <span
         className="absolute right-5 top-5 text-[10px] tracking-[0.18em] text-[var(--color-accent)]"

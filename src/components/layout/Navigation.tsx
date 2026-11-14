@@ -146,11 +146,11 @@ export function Navigation() {
       <header
         ref={navRef}
         className={cn(
-          "fixed top-0 left-0 right-0 z-[100]",
-          "transition-all duration-[var(--duration-slow)]",
+          "fixed top-3 left-1/2 z-[100] w-[calc(100%-1.5rem)] max-w-7xl -translate-x-1/2 rounded-full border border-[var(--color-border-strong)]",
+          "backdrop-blur-xl transition-all duration-[var(--duration-slow)] shadow-[0_12px_36px_rgba(0,0,0,0.22)]",
           scrolled
-            ? "backdrop-blur-md bg-[rgba(7,9,13,0.80)] border-b border-[var(--color-border)] shadow-[0_1px_0_0_rgba(255,255,255,0.04)]"
-            : "bg-transparent"
+            ? "bg-[rgba(7,9,13,0.92)]"
+            : "bg-[rgba(7,9,13,0.68)]"
         )}
         role="banner"
       >
@@ -160,7 +160,7 @@ export function Navigation() {
           The left and right zones each get flex-1 so the center stays
           truly centered regardless of content width.
         */}
-        <div className="max-w-7xl mx-auto px-6 md:px-10 h-16 flex items-center">
+        <div className="w-full px-4 sm:px-6 md:px-10 h-14 flex items-center">
 
           {/* LEFT — wordmark */}
           <div className="flex-1 flex items-center">
