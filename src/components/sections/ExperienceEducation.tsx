@@ -18,7 +18,7 @@ interface TimelineEntry {
   outcomes: string[];
 }
 
-const PROFESSIONAL_EXPERIENCE: TimelineEntry[] = [
+const EXPERIENCE: TimelineEntry[] = [
   {
     id: "independent",
     date: "2023 – Present",
@@ -68,13 +68,8 @@ const EDUCATION: TimelineEntry[] = [
 // ─── Component ────────────────────────────────────────────────────────────────
 
 /**
- * ExperienceEducation — spec §14.
- *
- * Editorial timeline with:
- *   - Scroll-triggered line growth (the vertical connector grows via Anime.js
- *     scaleY from 0→1 when the section enters the viewport).
- *   - Node activation — each dot fades in + scales up in sequence.
- *   - Each entry shows: date, organization, role, and outcome bullets.
+ * ExperienceEducation — editorial timeline with scroll-triggered connectors
+ * and restrained entry reveals.
  */
 export function ExperienceEducation() {
   const reducedMotion = useReducedMotion();
@@ -84,9 +79,41 @@ export function ExperienceEducation() {
   useEffect(() => {
     if (reducedMotion || !sectionRef.current) return;
 
-    const lines = Array.from(sectionRef.current.querySelectorAll<HTMLElement>("[data-tl-line]"));
-    const nodes = Array.from(sectionRef.current.querySelectorAll<HTMLElement>("[data-tl-node]"));
-    const timelineEntries = Array.from(sectionRef.current.querySelectorAll<HTMLElement>("[data-tl-entry]"));
+    const lines = Array.from(
+      sectionRef.current.querySelectorAll<HTMLElement>("[data-tl-line]")
+    );
+    const nodes = Array.from(
+      sectionRef.current.querySelectorAll<HTMLElement>("[data-tl-node]")
+    );
+    const timelineEntries = Array.from(
+      sectionRef.current.querySelectorAll<HTMLElement>("[data-tl-entry]")
+    );
+    let lineAnimation: ReturnType<typeof animate> | undefined;
+    let nodeAnimation: ReturnType<typeof animate> | undefined;
+    let entryAnimation: ReturnType<typeof animate> | undefined;
+    let animationFrame: number | undefined;
+
+    const restoreVisibleState = () => {
+      lines.forEach((line) => {
+        line.style.removeProperty("transform");
+        line.style.removeProperty("transform-origin");
+      });
+      nodes.forEach((node) => {
+        node.style.removeProperty("opacity");
+        node.style.removeProperty("transform");
+      });
+      timelineEntries.forEach((entry) => {
+        entry.style.removeProperty("opacity");
+        entry.style.removeProperty("transform");
+      });
+    };
+
+    const stopAnimations = () => {
+      lineAnimation?.revert();
+      nodeAnimation?.revert();
+      entryAnimation?.revert();
+      restoreVisibleState();
+    };
 
     const observer = new IntersectionObserver(
       (observerEntries) => {
@@ -108,23 +135,20 @@ export function ExperienceEducation() {
               entry.style.transform = "translateX(-16px)";
             });
 
-            requestAnimationFrame(() => {
-              // 1. Line grows
-              animate(lines, {
+            animationFrame = window.requestAnimationFrame(() => {
+              lineAnimation = animate(lines, {
                 scaleY: [0, 1],
                 duration: 900,
                 ease: "outCubic",
                 onComplete: () => {
-                  // 2. Nodes activate
-                  animate(nodes, {
+                  nodeAnimation = animate(nodes, {
                     opacity: [0, 1],
                     scale: [0, 1],
                     duration: 300,
                     delay: (_, i) => (i ?? 0) * 150,
                     ease: "outBack(1.5)",
                   });
-                  // 3. Entries slide in
-                  animate(timelineEntries, {
+                  entryAnimation = animate(timelineEntries, {
                     opacity: [0, 1],
                     translateX: [-16, 0],
                     duration: 450,
@@ -135,19 +159,8 @@ export function ExperienceEducation() {
               });
             });
           } catch (err) {
-            // Restore if animation setup fails
             console.error("Experience/Education animation failed:", err);
-            lines.forEach((line) => {
-              line.style.transform = "none";
-            });
-            nodes.forEach((n) => {
-              n.style.opacity = "1";
-              n.style.transform = "none";
-            });
-            timelineEntries.forEach((entry) => {
-              entry.style.opacity = "1";
-              entry.style.transform = "none";
-            });
+            stopAnimations();
           }
 
           observer.disconnect();
@@ -159,15 +172,17 @@ export function ExperienceEducation() {
     observer.observe(sectionRef.current);
 
     const fallback = window.setTimeout(() => {
-      const linesNow = Array.from(sectionRef.current?.querySelectorAll<HTMLElement>("[data-tl-line]") ?? []);
-      linesNow.forEach((line) => { if (line.style.transform === "scaleY(0)") line.style.transform = "none"; });
-      const nodesNow = Array.from(sectionRef.current?.querySelectorAll<HTMLElement>("[data-tl-node]") ?? []);
-      nodesNow.forEach((n) => { if (n.style.opacity === "0") { n.style.opacity = "1"; n.style.transform = "none"; } });
-      const entriesNow = Array.from(sectionRef.current?.querySelectorAll<HTMLElement>("[data-tl-entry]") ?? []);
-      entriesNow.forEach((entry) => { if (entry.style.opacity === "0") { entry.style.opacity = "1"; entry.style.transform = "none"; } });
-    }, 1200);
+      stopAnimations();
+    }, 2200);
 
-    return () => { clearTimeout(fallback); observer.disconnect(); };
+    return () => {
+      clearTimeout(fallback);
+      observer.disconnect();
+      if (animationFrame !== undefined) {
+        window.cancelAnimationFrame(animationFrame);
+      }
+      stopAnimations();
+    };
   }, [reducedMotion]);
 
   return (
@@ -175,16 +190,15 @@ export function ExperienceEducation() {
       id="experience"
       ref={sectionRef}
       aria-labelledby="experience-heading"
-      className="max-w-[1200px] mx-auto w-full px-6 md:px-10 py-24 md:py-32"
+      className="mx-auto w-full max-w-[1200px] px-6 py-12 md:px-10 md:py-16"
     >
-      {/* Top border */}
       <div
-        className="mb-16 h-px"
+        className="mb-12 h-px"
         style={{ backgroundColor: "var(--color-border)" }}
         aria-hidden="true"
       />
 
-      <div className="mb-14">
+      <div className="mb-10">
         <SectionHeading
           index="05"
           heading="Experience & Education"
@@ -195,20 +209,20 @@ export function ExperienceEducation() {
 
       {/* Timeline */}
       <div className="relative">
-        <section aria-labelledby="professional-experience-heading">
+        <section aria-labelledby="experience-records-heading">
           <h3
-            id="professional-experience-heading"
-            className="mb-6 pl-10 text-base font-semibold tracking-wide sm:text-lg"
+            id="experience-records-heading"
+            className="mb-4 pl-10 text-base font-semibold tracking-wide sm:mb-5 sm:text-lg"
             style={{ fontFamily: "var(--font-display)", color: "var(--color-text-primary)" }}
           >
-            Professional Experience
+            Experience
           </h3>
-          <ol className="flex flex-col" aria-label="Professional experience, newest first">
-            {PROFESSIONAL_EXPERIENCE.map((entry, index) => (
+          <ol className="flex flex-col" aria-label="Experience records, newest first">
+            {EXPERIENCE.map((entry, index) => (
               <TimelineEntry
                 key={entry.id}
                 entry={entry}
-                isLast={index === PROFESSIONAL_EXPERIENCE.length - 1}
+                isLast={index === EXPERIENCE.length - 1}
                 education={false}
               />
             ))}
@@ -217,12 +231,12 @@ export function ExperienceEducation() {
 
         <section
           aria-labelledby="education-heading"
-          className="mt-8 border-t pt-8"
+          className="mt-7 border-t pt-7 sm:mt-8 sm:pt-8"
           style={{ borderColor: "var(--color-border)" }}
         >
           <h3
             id="education-heading"
-            className="mb-6 pl-10 text-base font-semibold tracking-wide sm:text-lg"
+            className="mb-4 pl-10 text-base font-semibold tracking-wide sm:mb-5 sm:text-lg"
             style={{ fontFamily: "var(--font-display)", color: "var(--color-text-primary)" }}
           >
             Education
@@ -255,10 +269,11 @@ function TimelineEntry({
   education: boolean;
 }) {
   return (
-    <li className={cn(
-      "relative grid grid-cols-[24px_minmax(0,1fr)] gap-x-4 md:grid-cols-[24px_160px_minmax(0,1fr)] md:gap-x-5",
-      !isLast && "pb-10 md:pb-12"
-    )}
+    <li
+      className={cn(
+        "relative grid grid-cols-[24px_minmax(0,1fr)] gap-x-3 sm:gap-x-4 md:grid-cols-[24px_160px_minmax(0,1fr)] md:gap-x-5",
+        !isLast && "pb-7 sm:pb-8 md:pb-9"
+      )}
     >
       {(!isLast || education) && (
         <div
@@ -286,8 +301,8 @@ function TimelineEntry({
 
       {/* Date */}
       <p
-        className="col-start-2 row-start-1 mb-2 pt-1 text-[11px] leading-relaxed tracking-[0.12em] uppercase md:col-start-2 md:mb-0"
-        style={{ fontFamily: "var(--font-mono)", color: "var(--color-text-muted)" }}
+        className="col-start-2 row-start-1 mb-2 pt-1 text-[10px] leading-relaxed tracking-[0.12em] uppercase sm:text-[11px] md:col-start-2 md:mb-0 md:pt-2"
+        style={{ fontFamily: "var(--font-mono)", color: "var(--color-accent)" }}
       >
         {entry.date}
       </p>
@@ -295,7 +310,7 @@ function TimelineEntry({
       {/* Entry content */}
       <div
         data-tl-entry
-        className="col-start-2 row-start-2 max-w-3xl min-w-0 md:col-start-3 md:row-start-1"
+        className="col-start-2 row-start-2 max-w-3xl min-w-0 rounded-[var(--radius-large)] border border-[var(--color-border)] bg-[rgba(13,17,23,0.64)] p-4 sm:p-5 md:col-start-3 md:row-start-1 md:p-6"
       >
         {/* Role */}
         <h4
@@ -308,7 +323,10 @@ function TimelineEntry({
           {entry.role}
         </h4>
 
-        <p className="mt-1 text-sm leading-relaxed" style={{ color: "var(--color-text-secondary)" }}>
+        <p
+          className="mt-1 text-sm leading-relaxed"
+          style={{ color: "var(--color-text-secondary)" }}
+        >
           {entry.organization}
           {entry.location && ` · ${entry.location}`}
           {entry.context && ` · ${entry.context}`}
@@ -316,7 +334,7 @@ function TimelineEntry({
 
         {/* Outcomes */}
         {entry.outcomes.length > 0 && (
-          <ul className="mt-4 flex flex-col gap-2">
+          <ul className="mt-3 flex flex-col gap-2">
             {entry.outcomes.map((outcome) => (
               <li
                 key={outcome}

@@ -101,6 +101,43 @@ body {
   overflow-x: hidden;
 }
 
+/* Per-section spacing values address the measured content-to-content gaps. */
+#main-content > #work {
+  padding-block: 5rem 4rem;
+}
+
+#main-content > #about {
+  padding-block: 4rem;
+}
+
+#main-content > #capabilities {
+  padding-block: 4rem 3rem;
+}
+
+#main-content > #more-work,
+#main-content > #contact {
+  padding-block: 4rem;
+}
+
+@media (max-width: 767px) {
+  #main-content > #work {
+    padding-block: 3.5rem 3rem;
+  }
+
+  #main-content > #about {
+    padding-block: 3.5rem;
+  }
+
+  #main-content > #capabilities {
+    padding-block: 3rem 2.5rem;
+  }
+
+  #main-content > #more-work,
+  #main-content > #contact {
+    padding-block: 3rem;
+  }
+}
+
 /* ─── Typography defaults ────────────────────────────────────────────────────
    ──────────────────────────────────────────────────────────────────────────── */
 
