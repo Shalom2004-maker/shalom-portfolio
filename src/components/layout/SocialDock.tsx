@@ -25,6 +25,18 @@ const SOCIAL_LINKS = [
     icon: "email",
     external: false,
   },
+  {
+    label: "X",
+    href: "https://x.com/ShalomNdahiriwe",
+    icon: "x",
+    external: true,
+  },
+  {
+    label: "Instagram",
+    href: "https://www.instagram.com/ndahiriweshalom",
+    icon: "instagram",
+    external: true,
+  }
 ] as const;
 
 export function SocialDock() {
@@ -63,8 +75,14 @@ export function SocialDock() {
             <Image src="/icons/github.svg" alt="" width={18} height={18} />
           ) : icon === "linkedin" ? (
             <LinkedInIcon />
-          ) : (
+          ) : icon === "email" ? (
             <Mail aria-hidden="true" />
+          ) : icon === "x" ? (
+            <Image src="/icons/x.svg" alt="" width={18} height={18} />
+          ) : icon === "instagram" ? (
+            <Image src="/icons/instagram.svg" alt="" width={18} height={18} />
+          ) : (
+            <Image src={`/icons/${icon}.svg`} alt="" width={18} height={18} />
           )}
         </a>
       ))}

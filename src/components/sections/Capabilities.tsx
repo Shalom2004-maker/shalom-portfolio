@@ -23,15 +23,21 @@ const TECHNOLOGIES: Technology[] = [
   { name: "Dart", logo: "dart" },
   { name: "Git", logo: "git" },
   { name: "GitHub", logo: "github" },
+  { name: "GitHub Desktop", logo: "github-desktop" },
   { name: "VS Code", logo: "vscode" },
   { name: "Vercel", logo: "vercel" },
   { name: "Figma", logo: "figma" },
+  { name: "Drupal", logo: "drupal" },
+  { name: "Wordpress", logo: "wordpress" },
+  { name: "Wix", logo: "wix" },
+  { name: "Joomla", logo: "joomla" },
 ];
 
 const LEARNING_TECHNOLOGIES: Technology[] = [
   { name: "C#", logo: "csharp" },
   { name: "ASP.NET", logo: "dotnet" },
   { name: "Java", logo: "java" },
+  { name: "SQL Server", logo: "sqlserver" },
 ];
 
 export function Capabilities() {

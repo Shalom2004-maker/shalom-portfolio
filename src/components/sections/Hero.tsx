@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { animate, createTimeline, stagger } from "animejs";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { HeroMatrix } from "./HeroMatrix";
 
 const TECHNOLOGIES = [
   { name: "React", icon: "react.svg", position: "react" },
@@ -15,19 +16,9 @@ const TECHNOLOGIES = [
 ] as const;
 
 const TYPEWRITER_PHRASES = [
-  "Full-stack Developer",
-  "Software Engineering Enthusiast",
-  "Problem Solver",
-] as const;
-
-const CODE_STREAMS = [
-  "01{}const=>01;01[]",
-  "if(){}<>0101=>fn",
-  "const[]0101return",
-  "0101()=>{}class",
-  "import{}from0101",
-  "0101<main/>async",
-  "let[]0101return{}",
+  "Building practical systems",
+  "Solving real-world problems",
+  "Exploring technology's logic",
 ] as const;
 
 const REVEAL_SELECTOR = "[data-hero-reveal]";
@@ -53,11 +44,11 @@ export function Hero() {
     const atEnd = characterCount === activePhrase.length;
     const delay = deleting
       ? atStart
-        ? 360
-        : 36
+        ? 300
+        : 44
       : atEnd
-        ? 1350
-        : 64;
+        ? 1100
+        : 68;
 
     const timer = window.setTimeout(() => {
       if (deleting) {
@@ -90,6 +81,7 @@ export function Hero() {
     let timeline: ReturnType<typeof createTimeline> | undefined;
     let orbit: ReturnType<typeof animate> | undefined;
     let logoMotion: ReturnType<typeof animate> | undefined;
+    let observer: IntersectionObserver | undefined;
 
     try {
       timeline = createTimeline({ defaults: { ease: "outCubic" } });
@@ -124,6 +116,19 @@ export function Hero() {
         });
       }
 
+      if ("IntersectionObserver" in window) {
+        observer = new IntersectionObserver(([entry]) => {
+          if (entry.isIntersecting) {
+            orbit?.resume();
+            logoMotion?.resume();
+          } else {
+            orbit?.pause();
+            logoMotion?.pause();
+          }
+        });
+        observer.observe(section);
+      }
+
       const fallback = window.setTimeout(() => {
         targets.forEach((element) => {
           element.style.opacity = "1";
@@ -133,12 +138,14 @@ export function Hero() {
 
       return () => {
         window.clearTimeout(fallback);
+        observer?.disconnect();
         timeline?.revert();
         orbit?.revert();
         logoMotion?.revert();
       };
     } catch (error) {
       console.error("Hero animation failed:", error);
+      observer?.disconnect();
       targets.forEach((element) => {
         element.style.opacity = "1";
         element.style.transform = "none";
@@ -156,13 +163,7 @@ export function Hero() {
       className="hero-cinematic relative mx-auto flex min-h-[calc(100svh-4rem)] w-full max-w-7xl flex-col items-center justify-center overflow-hidden px-6 pb-12 pt-10 md:px-10 md:pb-16 md:pt-12"
     >
       <div className="hero-atmosphere" aria-hidden="true" />
-      <div className="hero-code-rain" aria-hidden="true">
-        {CODE_STREAMS.map((stream, index) => (
-          <span key={index} className="hero-code-column">
-            {stream.repeat(4)}
-          </span>
-        ))}
-      </div>
+      <HeroMatrix />
 
       <div className="hero-intro">
         <p className="hero-intro-eyebrow" data-hero-reveal>Hello, I&apos;m</p>
@@ -173,7 +174,10 @@ export function Hero() {
           I build web experiences.
         </p>
         <p className="hero-typewriter" data-hero-reveal>
-          <span className="sr-only">Full-stack Developer</span>
+          <span className="sr-only">
+            Building practical digital systems, solving real-world problems,
+            and exploring the logic behind technology.
+          </span>
           <span aria-hidden="true">
             {visiblePhrase}
             {!reducedMotion && (

@@ -6,7 +6,7 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 const CURRENTLY = [
   { label: "Building", value: "Web applications" },
   { label: "Exploring", value: "New technologies and systems" },
-  { label: "Learning", value: "C#, ASP.NET, Java" },
+  { label: "Learning", value: "C#, ASP.NET, Java, SQL Server" },
 ] as const;
 
 // ─── Component ────────────────────────────────────────────────────────────────

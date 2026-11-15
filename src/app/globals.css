@@ -644,7 +644,7 @@ code, kbd, samp, pre {
 
 /* ─── Developer introduction Hero ─────────────────────────────────────────── */
 .hero-atmosphere,
-.hero-code-rain {
+.hero-matrix {
   position: absolute;
   z-index: 0;
   inset: 0;
@@ -657,37 +657,17 @@ code, kbd, samp, pre {
     radial-gradient(ellipse at 50% 12%, rgba(19, 76, 136, 0.08), transparent 28rem);
 }
 
-.hero-code-rain {
+.hero-matrix {
   overflow: hidden;
-  opacity: 0.48;
-  mask-image: linear-gradient(180deg, transparent, #000 14%, #000 78%, transparent);
+  opacity: 0.94;
+  mask-image: linear-gradient(180deg, transparent, #000 8%, #000 92%, transparent);
 }
 
-.hero-code-column {
-  position: absolute;
-  top: -34%;
-  color: rgba(77, 163, 255, 0.32);
+.hero-matrix-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
   font-family: var(--font-mono);
-  font-size: 0.64rem;
-  letter-spacing: 0.34em;
-  line-height: 1.7;
-  text-orientation: upright;
-  writing-mode: vertical-rl;
-  white-space: nowrap;
-  animation: hero-code-fall 38s linear infinite;
-}
-
-.hero-code-column:nth-child(1) { left: 7%; animation-delay: -12s; }
-.hero-code-column:nth-child(2) { left: 20%; animation-delay: -27s; opacity: 0.55; }
-.hero-code-column:nth-child(3) { left: 34%; animation-delay: -6s; }
-.hero-code-column:nth-child(4) { left: 50%; animation-delay: -20s; opacity: 0.45; }
-.hero-code-column:nth-child(5) { left: 66%; animation-delay: -31s; }
-.hero-code-column:nth-child(6) { left: 81%; animation-delay: -9s; opacity: 0.6; }
-.hero-code-column:nth-child(7) { left: 94%; animation-delay: -23s; }
-
-@keyframes hero-code-fall {
-  from { transform: translateY(-12%); }
-  to { transform: translateY(36%); }
 }
 
 .hero-intro,
@@ -734,14 +714,14 @@ code, kbd, samp, pre {
 
 .hero-typewriter {
   display: grid;
-  min-height: 2.8em;
-  max-width: 32ch;
+  min-height: 2.6em;
+  max-width: 34ch;
   align-items: center;
   margin: 0.35rem auto 0;
   color: var(--color-accent);
   font-family: var(--font-mono);
-  font-size: clamp(0.74rem, 1.25vw, 0.9rem);
-  letter-spacing: 0.08em;
+  font-size: clamp(0.8rem, 1.3vw, 0.96rem);
+  letter-spacing: 0.055em;
   line-height: 1.4;
   text-align: center;
   text-wrap: balance;
@@ -1044,13 +1024,8 @@ code, kbd, samp, pre {
     padding-bottom: 2.75rem;
   }
 
-  .hero-code-column {
-    font-size: 0.55rem;
-    opacity: 0.48;
-  }
-
-  .hero-code-column:nth-child(2n) {
-    display: none;
+  .hero-matrix {
+    opacity: 0.84;
   }
 
   .hero-intro-name {
@@ -1147,10 +1122,6 @@ code, kbd, samp, pre {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-code-column {
-    animation: none;
-  }
-
   .hero-cta,
   .hero-tech-icon,
   .social-dock-link {
