@@ -59,7 +59,7 @@ export function Capabilities() {
       </div>
 
       <ul
-        className="grid grid-cols-2 gap-x-4 gap-y-9 sm:grid-cols-3 sm:gap-x-6 md:grid-cols-4 md:gap-x-8 md:gap-y-11 xl:grid-cols-5"
+        className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 md:grid-cols-4 xl:grid-cols-5"
         aria-label="Technologies and tools"
       >
         {TECHNOLOGIES.map((technology) => (
@@ -97,22 +97,24 @@ export function Capabilities() {
 
 function TechnologyItem({ technology }: { technology: Technology }) {
   return (
-    <li className="min-w-0">
-      <div className="flex min-h-24 flex-col items-center gap-3 text-center">
-        <Image
-          src={`/icons/${technology.logo}.svg`}
-          alt=""
-          aria-hidden="true"
-          width={48}
-          height={48}
-          sizes="(min-width: 1280px) 48px, (min-width: 640px) 44px, 40px"
-          className={`h-10 w-10 shrink-0 object-contain sm:h-12 sm:w-12 xl:h-[52px] xl:w-[52px] ${
-            technology.logo === "github" || technology.logo === "nextjs"
-              ? "rounded-full bg-white p-1"
-              : ""
-          }`}
-        />
-        <span className="block max-w-full text-sm leading-snug text-[var(--color-text-muted)] sm:text-[15px]">
+    <li className="group min-w-0">
+      <div className="flex min-h-[7.5rem] flex-col items-center justify-center gap-3 rounded-[var(--radius-large)] border border-[var(--color-border)] bg-[rgba(13,17,23,0.48)] px-2.5 py-3 text-center transition-colors duration-[var(--duration-base)] hover:border-[rgba(77,163,255,0.28)] hover:bg-[rgba(17,24,32,0.72)]">
+        <span className="grid h-14 w-14 shrink-0 place-items-center rounded-[var(--radius-medium)] border border-[var(--color-border)] bg-[rgba(255,255,255,0.025)] transition-colors duration-[var(--duration-base)] group-hover:border-[rgba(77,163,255,0.32)]">
+          <Image
+            src={`/icons/${technology.logo}.svg`}
+            alt=""
+            aria-hidden="true"
+            width={48}
+            height={48}
+            sizes="(min-width: 1280px) 48px, (min-width: 640px) 44px, 40px"
+            className={`h-10 w-10 shrink-0 object-contain sm:h-12 sm:w-12 xl:h-[52px] xl:w-[52px] ${
+              technology.logo === "github" || technology.logo === "nextjs"
+                ? "rounded-full bg-white p-1"
+                : ""
+            }`}
+          />
+        </span>
+        <span className="block max-w-full text-xs leading-snug text-[var(--color-text-muted)] transition-colors duration-[var(--duration-base)] group-hover:text-[var(--color-text-primary)] sm:text-sm">
           {technology.name}
         </span>
       </div>

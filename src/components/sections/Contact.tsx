@@ -86,7 +86,6 @@ export function Contact() {
             });
           } catch (err) {
             // Restore on error
-            // eslint-disable-next-line no-console
             console.error("Contact animation failed:", err);
             targets.forEach((el) => {
               el.style.opacity = "1";
@@ -210,7 +209,7 @@ export function Contact() {
               target={external ? "_blank" : undefined}
               rel={external ? "noopener noreferrer" : undefined}
               className={cn(
-                "op-mask-corner-cuts-angle-1 group flex items-center justify-between",
+                "rounded-[var(--radius-large)] group flex items-center justify-between",
                 "px-5 py-4",
                 "border border-[rgba(77,163,255,0.24)]",
                 "bg-[var(--color-surface)]",
@@ -221,7 +220,7 @@ export function Contact() {
             >
               <div className="flex items-center gap-3">
                 <div
-                  className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+                  className="w-8 h-8 rounded-[var(--radius-medium)] flex items-center justify-center shrink-0"
                   style={{
                     backgroundColor: "var(--color-surface-elevated)",
                     border: "1px solid var(--color-border)",

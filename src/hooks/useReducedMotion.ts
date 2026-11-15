@@ -1,12 +1,29 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
+
+const MEDIA_QUERY = "(prefers-reduced-motion: reduce)";
+
+function subscribe(onChange: () => void) {
+  const mediaQuery = window.matchMedia(MEDIA_QUERY);
+  mediaQuery.addEventListener("change", onChange);
+  return () => mediaQuery.removeEventListener("change", onChange);
+}
+
+function getSnapshot() {
+  return window.matchMedia(MEDIA_QUERY).matches;
+}
+
+function getServerSnapshot() {
+  return true;
+}
 
 /**
  * Returns true when the user has requested reduced motion via the
  * `prefers-reduced-motion: reduce` media query.
  *
- * SSR-safe: returns false on the server, updates after hydration.
+ * Uses a reduced-motion server snapshot to keep hydration consistent and
+ * prevent animation effects from starting before the browser preference is known.
  *
  * Gate every Anime.js animation behind this hook:
  *
@@ -16,16 +33,5 @@ import { useEffect, useState } from "react";
  * ```
  */
 export function useReducedMotion(): boolean {
-  const [reduced, setReduced] = useState(false);
-
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReduced(mq.matches);
-
-    const handler = (e: MediaQueryListEvent) => setReduced(e.matches);
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
-  }, []);
-
-  return reduced;
+  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 }

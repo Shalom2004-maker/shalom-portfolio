@@ -46,7 +46,6 @@ export function MoreWork() {
             });
           } catch (err) {
             // Restore on error
-            // eslint-disable-next-line no-console
             console.error("MoreWork animation failed:", err);
             targets.forEach((el) => {
               el.style.opacity = "1";
@@ -85,7 +84,7 @@ export function MoreWork() {
       {/* Contained accent block */}
       <div
         className={cn(
-          "op-mask-corner-cuts-angle-2 relative overflow-hidden",
+          "rounded-[var(--radius-extra-large)] relative overflow-hidden",
           "border border-[rgba(77,163,255,0.28)]",
           "bg-[var(--color-surface)]",
           "px-8 md:px-14 py-14 md:py-20",

@@ -1,5 +1,4 @@
-"use client";
-import { useEffect, useState } from "react";
+import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/cn";
 
@@ -34,11 +33,7 @@ const SOCIAL_LINKS = [
  * Server component — no interactivity required.
  */
 export function Footer() {
-  const [year, setYear] = useState<number | null>(null);
-
-  useEffect(() => {
-    setYear(new Date().getFullYear());
-  }, []);
+  const year = new Date().getFullYear();
 
   return (
     <footer
@@ -55,14 +50,14 @@ export function Footer() {
 
           {/* Wordmark */}
           <div className="flex flex-col gap-2">
-            <a
+            <Link
               href="/"
               className="text-sm font-semibold tracking-wide text-[var(--color-text-primary)] hover:text-[var(--color-accent)] transition-colors duration-[var(--duration-base)]"
               style={{ fontFamily: "var(--font-mono)" }}
               aria-label="Shalom Ndahiriwe — home"
             >
               SN
-            </a>
+            </Link>
             <p
               className="text-xs max-w-[16rem] leading-relaxed"
               style={{ color: "var(--color-text-muted)" }}

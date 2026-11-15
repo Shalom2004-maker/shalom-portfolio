@@ -27,7 +27,7 @@ export function About() {
         aria-hidden="true"
       />
 
-      <div className="grid grid-cols-1 items-start gap-y-12 lg:grid-cols-[minmax(0,0.42fr)_minmax(0,0.58fr)] lg:gap-x-14">
+      <div className="grid grid-cols-1 items-start gap-y-10 lg:grid-cols-[minmax(0,0.42fr)_minmax(0,0.58fr)] lg:gap-x-14">
         <div>
           <SectionHeading
             index="03"
@@ -46,7 +46,7 @@ export function About() {
           </h3>
         </div>
 
-        <div className="flex max-w-2xl flex-col gap-5 lg:pt-[6.5rem]">
+        <div className="flex max-w-2xl flex-col gap-5 rounded-[var(--radius-extra-large)] border border-[var(--color-border)] bg-[rgba(13,17,23,0.54)] p-5 sm:p-7 lg:mt-[4.75rem]">
           <p
             className="text-base leading-[1.85] sm:text-lg"
             style={{ color: "var(--color-text-primary)" }}
@@ -79,14 +79,14 @@ export function About() {
         className="mt-16 grid grid-cols-1 items-start gap-8 border-t pt-8 md:mt-[4.25rem] md:grid-cols-[minmax(0,0.32fr)_minmax(0,0.68fr)] md:items-center md:gap-x-10 md:pt-10"
         style={{ borderColor: "var(--color-border)" }}
       >
-        <figure className="w-[190px] max-w-full md:w-full md:max-w-[210px] lg:max-w-[270px] xl:max-w-[310px]">
+        <figure className="w-[190px] max-w-full overflow-hidden rounded-[var(--radius-large)] border border-[var(--color-border)] bg-[var(--color-surface)] md:w-full md:max-w-[210px] lg:max-w-[270px] xl:max-w-[310px]">
           <Image
             src="/images/Portrait.png"
             alt="Shalom Ndahiriwe"
             width={941}
             height={1672}
             sizes="(min-width: 1280px) 310px, (min-width: 1024px) 270px, (min-width: 768px) 210px, 190px"
-            className="block h-auto w-full border border-[var(--color-border)] object-contain"
+            className="block h-auto w-full object-contain"
           />
         </figure>
 

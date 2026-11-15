@@ -1,4 +1,5 @@
 import { Navigation } from "@/components/layout/Navigation";
+import { SocialDock } from "@/components/layout/SocialDock";
 import { Footer } from "@/components/layout/Footer";
 import { cn } from "@/lib/cn";
 
@@ -29,6 +30,7 @@ export function AppShell({ children, mainClassName }: AppShellProps) {
         {children}
       </main>
 
+      <SocialDock />
       <Footer />
     </>
   );
