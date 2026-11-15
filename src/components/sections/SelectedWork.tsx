@@ -9,9 +9,10 @@ import {
   Code2,
   ExternalLink,
 } from "lucide-react";
-import { animate, stagger } from "animejs";
+import { animate, cubicBezier, stagger } from "animejs";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { MaskedTextReveal } from "@/components/ui/MaskedTextReveal";
 import { cn } from "@/lib/cn";
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
@@ -129,39 +130,87 @@ export function SelectedWork() {
   useEffect(() => {
     if (reducedMotion || !sectionRef.current) return;
 
-    const targets = Array.from(sectionRef.current.querySelectorAll<HTMLElement>("[data-work-reveal]"));
+    const section = sectionRef.current;
+    const maskedTargets = Array.from(
+      section.querySelectorAll<HTMLElement>("[data-masked-text-content]")
+    );
+    const targets = Array.from(
+      section.querySelectorAll<HTMLElement>("[data-work-reveal]")
+    );
 
-    if (!targets.length) return;
+    if (!targets.length && !maskedTargets.length) return;
 
+    let maskedAnimation: ReturnType<typeof animate> | undefined;
+    let targetAnimation: ReturnType<typeof animate> | undefined;
+    let animationFrame: number | undefined;
+    let fallback: number | undefined;
+    let hasStarted = false;
+    const allTargets = [...maskedTargets, ...targets];
+    const restoreVisibleState = () => {
+      if (!hasStarted) return;
+
+      allTargets.forEach((element) => {
+        element.style.opacity = "1";
+        element.style.transform = "none";
+      });
+    };
+    const restoreMaskedText = () => {
+      maskedTargets.forEach((element) => {
+        element.style.opacity = "1";
+        element.style.transform = "none";
+      });
+    };
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && !hasAnimated.current) {
           hasAnimated.current = true;
+          observer.disconnect();
+
           try {
-            // Hide then animate — only when we know the section is in view
+            hasStarted = true;
+            maskedTargets.forEach((element) => {
+              element.style.opacity = "0";
+              element.style.transform = "translateY(100%)";
+            });
             targets.forEach((el) => {
               el.style.opacity = "0";
               el.style.transform = "translateY(32px)";
             });
-            requestAnimationFrame(() => {
-              animate(targets, {
-                opacity: [0, 1],
-                translateY: [32, 0],
-                duration: 700,
-                delay: stagger(100, { start: 0 }),
-                ease: "outCubic",
-              });
+
+            if (fallback !== undefined) window.clearTimeout(fallback);
+            fallback = window.setTimeout(restoreVisibleState, 1400);
+            animationFrame = window.requestAnimationFrame(() => {
+              animationFrame = undefined;
+
+              try {
+                if (maskedTargets.length) {
+                  maskedAnimation = animate(maskedTargets, {
+                    opacity: [0, 1],
+                    translateY: ["100%", "0%"],
+                    duration: 820,
+                    ease: cubicBezier(0.22, 1, 0.36, 1),
+                    onComplete: restoreMaskedText,
+                  });
+                }
+
+                if (targets.length) {
+                  targetAnimation = animate(targets, {
+                    opacity: [0, 1],
+                    translateY: [32, 0],
+                    duration: 700,
+                    delay: stagger(100, { start: 0 }),
+                    ease: "outCubic",
+                  });
+                }
+              } catch (err) {
+                console.error("SelectedWork animation failed:", err);
+                restoreVisibleState();
+              }
             });
           } catch (err) {
-            // restore on error
             console.error("SelectedWork animation failed:", err);
-            targets.forEach((el) => {
-              el.style.opacity = "1";
-              el.style.transform = "none";
-            });
+            restoreVisibleState();
           }
-
-          observer.disconnect();
         }
       },
       { threshold: 0.1 }
@@ -169,19 +218,17 @@ export function SelectedWork() {
 
     observer.observe(sectionRef.current);
 
-    // Failsafe: ensure reveals are visible after 1.2s in case animation hangs
-    const fallback = window.setTimeout(() => {
-      targets.forEach((el) => {
-        if (el.style.opacity === "0") {
-          el.style.opacity = "1";
-          el.style.transform = "none";
-        }
-      });
-    }, 1200);
+    fallback = window.setTimeout(restoreVisibleState, 1200);
 
     return () => {
-      clearTimeout(fallback);
+      if (fallback !== undefined) window.clearTimeout(fallback);
       observer.disconnect();
+      if (animationFrame !== undefined) {
+        window.cancelAnimationFrame(animationFrame);
+      }
+      maskedAnimation?.revert();
+      targetAnimation?.revert();
+      restoreVisibleState();
     };
   }, [reducedMotion]);
 
@@ -234,7 +281,10 @@ export function SelectedWork() {
       aria-labelledby="work-heading"
       className="max-w-7xl mx-auto w-full px-6 md:px-10 py-24 md:py-32"
     >
-      <div data-work-reveal className="mb-14">
+      <MaskedTextReveal
+        trigger="external"
+        className="mb-14"
+      >
         <SectionHeading
           index="02"
           heading="Selected Work"
@@ -242,7 +292,7 @@ export function SelectedWork() {
           as="h2"
           id="work-heading"
         />
-      </div>
+      </MaskedTextReveal>
 
       <div
         data-work-reveal

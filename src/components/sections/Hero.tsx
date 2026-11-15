@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import { animate, createTimeline, stagger } from "animejs";
+import { animate, createTimeline, cubicBezier, stagger } from "animejs";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { HeroMatrix } from "./HeroMatrix";
 
@@ -22,6 +22,7 @@ const TYPEWRITER_PHRASES = [
 ] as const;
 
 const REVEAL_SELECTOR = "[data-hero-reveal]";
+const MASK_REVEAL_SELECTOR = "[data-hero-mask-reveal]";
 
 export function Hero() {
   const reducedMotion = useReducedMotion();
@@ -72,9 +73,19 @@ export function Hero() {
     if (reducedMotion || !sectionRef.current) return;
 
     const section = sectionRef.current;
+    const maskedTargets = Array.from(
+      section.querySelectorAll<HTMLElement>(MASK_REVEAL_SELECTOR)
+    );
     const targets = Array.from(
       section.querySelectorAll<HTMLElement>(REVEAL_SELECTOR)
     );
+    const introEyebrow = targets.find((element) =>
+      element.matches(".hero-intro-eyebrow")
+    );
+    const supportingTargets = targets.filter(
+      (element) => element !== introEyebrow
+    );
+    const allRevealTargets = [...maskedTargets, ...targets];
     const logos = Array.from(
       section.querySelectorAll<HTMLElement>("[data-hero-float]")
     );
@@ -85,16 +96,45 @@ export function Hero() {
 
     try {
       timeline = createTimeline({ defaults: { ease: "outCubic" } });
-      timeline.add(
-        targets,
-        {
-          opacity: [0, 1],
-          translateY: [14, 0],
-          duration: 460,
-          delay: stagger(70),
-        },
-        100
-      );
+
+      if (introEyebrow) {
+        timeline.add(
+          introEyebrow,
+          {
+            opacity: [0, 1],
+            translateY: [14, 0],
+            duration: 460,
+          },
+          100
+        );
+      }
+
+      if (maskedTargets.length) {
+        timeline.add(
+          maskedTargets,
+          {
+            opacity: [0, 1],
+            translateY: ["100%", "0%"],
+            duration: 820,
+            delay: stagger(120),
+            ease: cubicBezier(0.22, 1, 0.36, 1),
+          },
+          180
+        );
+      }
+
+      if (supportingTargets.length) {
+        timeline.add(
+          supportingTargets,
+          {
+            opacity: [0, 1],
+            translateY: [14, 0],
+            duration: 460,
+            delay: stagger(70),
+          },
+          480
+        );
+      }
 
       if (orbitRef.current) {
         orbit = animate(orbitRef.current, {
@@ -130,7 +170,7 @@ export function Hero() {
       }
 
       const fallback = window.setTimeout(() => {
-        targets.forEach((element) => {
+        allRevealTargets.forEach((element) => {
           element.style.opacity = "1";
           element.style.transform = "none";
         });
@@ -146,7 +186,7 @@ export function Hero() {
     } catch (error) {
       console.error("Hero animation failed:", error);
       observer?.disconnect();
-      targets.forEach((element) => {
+      allRevealTargets.forEach((element) => {
         element.style.opacity = "1";
         element.style.transform = "none";
       });
@@ -167,11 +207,19 @@ export function Hero() {
 
       <div className="hero-intro">
         <p className="hero-intro-eyebrow" data-hero-reveal>Hello, I&apos;m</p>
-        <h1 className="hero-intro-name" data-hero-reveal>
-          Shalom Ndahiriwe
+        <h1 className="hero-intro-name">
+          <span className="hero-text-mask">
+            <span className="hero-text-mask__content" data-hero-mask-reveal>
+              Shalom Ndahiriwe
+            </span>
+          </span>
         </h1>
-        <p className="hero-intro-headline" data-hero-reveal>
-          I build web experiences.
+        <p className="hero-intro-headline">
+          <span className="hero-text-mask">
+            <span className="hero-text-mask__content" data-hero-mask-reveal>
+              I build web experiences.
+            </span>
+          </span>
         </p>
         <p className="hero-typewriter" data-hero-reveal>
           <span className="sr-only">

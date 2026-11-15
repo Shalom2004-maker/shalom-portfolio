@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { MaskedTextReveal } from "@/components/ui/MaskedTextReveal";
 
 type Technology = {
   name: string;
@@ -54,7 +55,7 @@ export function Capabilities() {
         aria-hidden="true"
       />
 
-      <div className="mb-14">
+      <MaskedTextReveal className="mb-14">
         <SectionHeading
           index="04"
           heading="Capabilities"
@@ -62,7 +63,7 @@ export function Capabilities() {
           as="h2"
           id="capabilities-heading"
         />
-      </div>
+      </MaskedTextReveal>
 
       <ul
         className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 md:grid-cols-4 xl:grid-cols-5"

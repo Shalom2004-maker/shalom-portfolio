@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { MaskedTextReveal } from "@/components/ui/MaskedTextReveal";
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
@@ -29,21 +30,25 @@ export function About() {
 
       <div className="grid grid-cols-1 items-start gap-y-10 lg:grid-cols-[minmax(0,0.42fr)_minmax(0,0.58fr)] lg:gap-x-14">
         <div>
-          <SectionHeading
-            index="03"
-            heading="About"
-            as="h2"
-            id="about-heading"
-          />
-          <h3
-            className="mt-7 max-w-[24ch] text-[clamp(2.25rem,3.8vw,3.5rem)] font-semibold leading-[1.08] tracking-[-0.04em]"
-            style={{
-              fontFamily: "var(--font-display)",
-              color: "var(--color-text-primary)",
-            }}
-          >
-            I enjoy building software to solve practical problems.
-          </h3>
+          <MaskedTextReveal>
+            <SectionHeading
+              index="03"
+              heading="About"
+              as="h2"
+              id="about-heading"
+            />
+          </MaskedTextReveal>
+          <MaskedTextReveal className="mt-7" delay={120}>
+            <h3
+              className="max-w-[24ch] text-[clamp(2.25rem,3.8vw,3.5rem)] font-semibold leading-[1.08] tracking-[-0.04em]"
+              style={{
+                fontFamily: "var(--font-display)",
+                color: "var(--color-text-primary)",
+              }}
+            >
+              I enjoy building software to solve practical problems.
+            </h3>
+          </MaskedTextReveal>
         </div>
 
         <div className="flex max-w-2xl flex-col gap-5 rounded-[var(--radius-extra-large)] border border-[var(--color-border)] bg-[rgba(13,17,23,0.54)] p-5 sm:p-7 lg:mt-[4.75rem]">
