@@ -103,38 +103,40 @@ body {
 
 /* Per-section spacing values address the measured content-to-content gaps. */
 #main-content > #work {
-  padding-block: 5rem 4rem;
-}
-
-#main-content > #about {
-  padding-block: 4rem;
-}
-
-#main-content > #capabilities {
   padding-block: 4rem 3rem;
 }
 
+#main-content > #about {
+  padding-block: 3rem;
+}
+
+#main-content > #capabilities {
+  padding-block: 3rem 2rem;
+}
+
+#main-content > #experience,
 #main-content > #more-work,
 #main-content > #contact {
-  padding-block: 4rem;
+  padding-block: 3rem;
 }
 
 @media (max-width: 767px) {
   #main-content > #work {
-    padding-block: 3.5rem 3rem;
+    padding-block: 3rem 2rem;
   }
 
   #main-content > #about {
-    padding-block: 3.5rem;
+    padding-block: 2.5rem;
   }
 
   #main-content > #capabilities {
-    padding-block: 3rem 2.5rem;
+    padding-block: 2.5rem 1.5rem;
   }
 
+  #main-content > #experience,
   #main-content > #more-work,
   #main-content > #contact {
-    padding-block: 3rem;
+    padding-block: 2.5rem;
   }
 }
 
@@ -957,7 +959,7 @@ code, kbd, samp, pre {
   position: fixed;
   z-index: 80;
   top: 50%;
-  right: clamp(1rem, calc((100vw - 80rem) / 2), 5rem);
+  right: clamp(1rem, calc((100vw - 80rem) / 2 - 1.5rem), 3.5rem);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1106,22 +1108,26 @@ code, kbd, samp, pre {
     left: 1.5rem;
   }
 
+}
+
+@media (max-width: 1360px) {
+  #main-content {
+    padding-right: calc(2.5rem + env(safe-area-inset-right));
+  }
+
   .social-dock {
-    top: auto;
-    right: auto;
-    flex-direction: row;
-    bottom: max(1rem, env(safe-area-inset-bottom));
-    left: 50%;
-    transform: translateX(-50%);
+    right: max(0.5rem, env(safe-area-inset-right));
+    padding: 0.25rem;
   }
 
-  .social-dock-link {
-    width: 2.5rem;
-    height: 2.5rem;
+  footer > div {
+    padding-right: calc(4.5rem + env(safe-area-inset-right));
   }
+}
 
-  .social-dock + footer {
-    padding-bottom: calc(5rem + env(safe-area-inset-bottom));
+@media (max-width: 767px) {
+  footer > div {
+    padding-right: calc(4rem + env(safe-area-inset-right));
   }
 }
 

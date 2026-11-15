@@ -79,7 +79,7 @@ export function MoreWork() {
       id="more-work"
       ref={sectionRef}
       aria-label="More work and GitHub"
-      className="max-w-7xl mx-auto w-full px-6 md:px-10 py-20 md:py-28"
+      className="max-w-7xl mx-auto w-full px-6 md:px-10 py-10 md:py-12"
     >
       {/* Contained accent block */}
       <div
@@ -87,8 +87,8 @@ export function MoreWork() {
           "rounded-[var(--radius-extra-large)] relative overflow-hidden",
           "border border-[rgba(77,163,255,0.28)]",
           "bg-[var(--color-surface)]",
-          "px-8 md:px-14 py-14 md:py-20",
-          "flex flex-col md:flex-row md:items-center md:justify-between gap-8"
+          "px-6 sm:px-8 md:px-12 py-10 md:py-14",
+          "flex flex-col md:flex-row md:items-center md:justify-between gap-6 md:gap-8"
         )}
       >
         {/* Subtle grid background */}

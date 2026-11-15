@@ -43,10 +43,10 @@ export function Footer() {
       )}
       role="contentinfo"
     >
-      <div className="max-w-7xl mx-auto w-full px-6 md:px-10 py-14">
+      <div className="max-w-7xl mx-auto w-full px-6 md:px-10 py-10 md:py-12">
 
         {/* Top row: wordmark + nav */}
-        <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-10 mb-12">
+        <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-8 md:gap-10 mb-8 md:mb-10">
 
           {/* Wordmark */}
           <div className="flex flex-col gap-2">
@@ -128,13 +128,13 @@ export function Footer() {
 
         {/* Divider */}
         <div
-          className="h-px mb-6"
+          className="h-px mb-4"
           style={{ backgroundColor: "var(--color-border)" }}
           aria-hidden="true"
         />
 
         {/* Bottom row: copyright + back to top */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <p
             className="text-xs"
             style={{
