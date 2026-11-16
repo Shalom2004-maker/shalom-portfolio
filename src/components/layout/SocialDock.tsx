@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Mail } from "lucide-react";
 import { animate } from "animejs";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
@@ -42,6 +42,8 @@ const SOCIAL_LINKS = [
 export function SocialDock() {
   const reducedMotion = useReducedMotion();
   const dockRef = useRef<HTMLElement>(null);
+  const [obscured, setObscured] = useState(false);
+  const [visibilityChecked, setVisibilityChecked] = useState(false);
 
   useEffect(() => {
     const dock = dockRef.current;
@@ -59,8 +61,72 @@ export function SocialDock() {
     };
   }, [reducedMotion]);
 
+  useEffect(() => {
+    const dock = dockRef.current;
+    if (!dock) return;
+
+    const protectedContent = document.querySelectorAll<HTMLElement>(
+      ".hero-actions, .hero-portrait-stage, .hero-role-note, #work > .masked-text-reveal, #work-heading, #work .work-carousel__information, #work .work-carousel__control, #work .work-carousel__indicator, #contact a, #more-work a, footer > div"
+    );
+    let frameId = 0;
+    let previousObscured = false;
+
+    const syncVisibility = () => {
+      frameId = 0;
+      const isMobile = window.matchMedia("(max-width: 767px)").matches;
+      const bounds = dock.getBoundingClientRect();
+      const overlaps = isMobile && Array.from(protectedContent).some((element) => {
+        const contentBounds = element.getBoundingClientRect();
+        return (
+          contentBounds.width > 0 &&
+          contentBounds.height > 0 &&
+          contentBounds.left < bounds.right &&
+          contentBounds.right > bounds.left &&
+          contentBounds.top < bounds.bottom &&
+          contentBounds.bottom > bounds.top
+        );
+      });
+      const nextObscured =
+        overlaps && !dock.contains(document.activeElement);
+
+      setVisibilityChecked(true);
+      if (nextObscured !== previousObscured) {
+        previousObscured = nextObscured;
+        setObscured(nextObscured);
+      }
+    };
+
+    const scheduleSync = () => {
+      if (!frameId) frameId = window.requestAnimationFrame(syncVisibility);
+    };
+
+    const resizeObserver = new ResizeObserver(scheduleSync);
+    resizeObserver.observe(dock);
+    protectedContent.forEach((element) => resizeObserver.observe(element));
+    scheduleSync();
+    window.addEventListener("scroll", scheduleSync, { passive: true });
+    window.addEventListener("resize", scheduleSync);
+    dock.addEventListener("focusout", scheduleSync);
+
+    return () => {
+      if (frameId) window.cancelAnimationFrame(frameId);
+      resizeObserver.disconnect();
+      window.removeEventListener("scroll", scheduleSync);
+      window.removeEventListener("resize", scheduleSync);
+      dock.removeEventListener("focusout", scheduleSync);
+    };
+  }, []);
+
   return (
-    <nav ref={dockRef} className="social-dock" aria-label="Social links">
+    <nav
+      ref={dockRef}
+      className={`social-dock${obscured ? " social-dock--obscured" : ""}${
+        visibilityChecked ? " social-dock--checked" : ""
+      }`}
+      aria-label="Social links"
+      aria-hidden={obscured}
+      inert={obscured}
+    >
       {SOCIAL_LINKS.map(({ label, href, icon, external }) => (
         <a
           key={label}

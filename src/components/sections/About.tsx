@@ -46,7 +46,10 @@ export function About() {
                 color: "var(--color-text-primary)",
               }}
             >
-              I enjoy building software to solve practical problems.
+              I enjoy building software{" "}
+              <span className="text-[var(--color-accent)]">
+                to solve practical problems.
+              </span>
             </h3>
           </MaskedTextReveal>
         </div>
