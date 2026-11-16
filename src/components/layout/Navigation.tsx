@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { animate, createTimeline } from "animejs";
@@ -10,8 +11,8 @@ import { cn } from "@/lib/cn";
 // ─── Nav links ────────────────────────────────────────────────────────────────
 
 const NAV_LINKS = [
-  { label: "Work",    href: "#work",    sectionId: "work" },
-  { label: "About",   href: "#about",   sectionId: "about" },
+  { label: "Work", href: "#work", sectionId: "work" },
+  { label: "About", href: "#about", sectionId: "about" },
   { label: "Capabilities", href: "#capabilities", sectionId: "capabilities" },
   { label: "Experience", href: "#experience", sectionId: "experience" },
   { label: "Contact", href: "#contact", sectionId: "contact" },
@@ -33,15 +34,15 @@ const NAV_LINKS = [
  * Entrance: Anime.js timeline fades in wordmark → links → right slot on mount.
  */
 export function Navigation() {
-  const reducedMotion                 = useReducedMotion();
-  const [scrolled, setScrolled]       = useState(false);
-  const [mobileOpen, setMobileOpen]   = useState(false);
-  const [activeSection, setActive]    = useState<string>("");
+  const reducedMotion = useReducedMotion();
+  const [scrolled, setScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [activeSection, setActive] = useState<string>("");
 
-  const navRef      = useRef<HTMLElement>(null);
+  const navRef = useRef<HTMLElement>(null);
   const wordmarkRef = useRef<HTMLAnchorElement>(null);
-  const linksRef    = useRef<HTMLUListElement>(null);
-  const rightRef    = useRef<HTMLDivElement>(null);
+  const linksRef = useRef<HTMLUListElement>(null);
+  const rightRef = useRef<HTMLDivElement>(null);
 
   // ─── Scroll → glass transition ──────────────────────────────────────────
   useEffect(() => {
@@ -60,17 +61,19 @@ export function Navigation() {
     if (!wm || !ln || !rt) return;
 
     const tl = createTimeline({ defaults: { ease: "outCubic" } })
-      .add(wm,  { opacity: [0, 1], translateY: [-8, 0], duration: 400 }, 200)
-      .add(ln,  { opacity: [0, 1], translateY: [-8, 0], duration: 400 }, 350)
-      .add(rt,  { opacity: [0, 1], translateY: [-8, 0], duration: 400 }, 450);
+      .add(wm, { opacity: [0, 1], translateY: [-8, 0], duration: 400 }, 200)
+      .add(ln, { opacity: [0, 1], translateY: [-8, 0], duration: 400 }, 350)
+      .add(rt, { opacity: [0, 1], translateY: [-8, 0], duration: 400 }, 450);
 
-    return () => { tl.revert(); };
+    return () => {
+      tl.revert();
+    };
   }, [reducedMotion]);
 
   // ─── Active section tracker ─────────────────────────────────────────────
   useEffect(() => {
     const sections = Array.from(
-      document.querySelectorAll<HTMLElement>("section[id]")
+      document.querySelectorAll<HTMLElement>("section[id]"),
     );
     if (!sections.length) return;
 
@@ -82,11 +85,17 @@ export function Navigation() {
           if (e.isIntersecting) visible.set(e.target.id, e.intersectionRatio);
           else visible.delete(e.target.id);
         });
-        let best = "", bestRatio = 0;
-        visible.forEach((r, id) => { if (r > bestRatio) { bestRatio = r; best = id; } });
+        let best = "",
+          bestRatio = 0;
+        visible.forEach((r, id) => {
+          if (r > bestRatio) {
+            bestRatio = r;
+            best = id;
+          }
+        });
         setActive(best);
       },
-      { threshold: [0, 0.2, 0.5, 1], rootMargin: "-64px 0px 0px 0px" }
+      { threshold: [0, 0.2, 0.5, 1], rootMargin: "-64px 0px 0px 0px" },
     );
 
     sections.forEach((s) => observer.observe(s));
@@ -95,8 +104,10 @@ export function Navigation() {
 
   // ─── Close on desktop resize ─────────────────────────────────────────────
   useEffect(() => {
-    const mq = window.matchMedia("(min-width: 768px)");
-    const h = (e: MediaQueryListEvent) => { if (e.matches) setMobileOpen(false); };
+    const mq = window.matchMedia("(min-width: 1024px)");
+    const h = (e: MediaQueryListEvent) => {
+      if (e.matches) setMobileOpen(false);
+    };
     mq.addEventListener("change", h);
     return () => mq.removeEventListener("change", h);
   }, []);
@@ -104,7 +115,9 @@ export function Navigation() {
   // ─── Lock body scroll ────────────────────────────────────────────────────
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, [mobileOpen]);
 
   // ─── Mobile menu animation ───────────────────────────────────────────────
@@ -125,7 +138,7 @@ export function Navigation() {
   }, [mobileOpen, reducedMotion]);
 
   const toggleMobile = () => setMobileOpen((v) => !v);
-  const closeMobile  = () => setMobileOpen(false);
+  const closeMobile = () => setMobileOpen(false);
 
   return (
     <>
@@ -137,7 +150,7 @@ export function Navigation() {
           "fixed top-4 left-4 z-[200]",
           "px-4 py-2 rounded text-sm font-medium",
           "bg-[var(--color-accent)] text-[#07090D]",
-          "focus:outline-none"
+          "focus:outline-none",
         )}
       >
         Skip to main content
@@ -149,9 +162,7 @@ export function Navigation() {
         className={cn(
           "fixed top-3 left-1/2 z-[100] w-[calc(100%-1.5rem)] max-w-7xl -translate-x-1/2 rounded-full border border-[var(--color-border-strong)]",
           "backdrop-blur-xl transition-all duration-[var(--duration-slow)] shadow-[0_12px_36px_rgba(0,0,0,0.22)]",
-          scrolled
-            ? "bg-[rgba(7,9,13,0.92)]"
-            : "bg-[rgba(7,9,13,0.68)]"
+          scrolled ? "bg-[rgba(7,9,13,0.92)]" : "bg-[rgba(7,9,13,0.68)]",
         )}
         role="banner"
       >
@@ -162,13 +173,21 @@ export function Navigation() {
           truly centered regardless of content width.
         */}
         <div className="w-full px-4 sm:px-6 md:px-10 h-14 flex items-center">
-
           {/* LEFT — wordmark */}
           <div className="flex-1 flex items-center">
+            <Image
+              src="/images/favicon.png"
+              alt=""
+              aria-hidden="true"
+              width={48}
+              height={48}
+              sizes="(min-width: 640px) 48px, 32px"
+              className="mr-2 h-8 w-8 shrink-0 object-contain sm:h-12 sm:w-12"
+            />
             <Link
               ref={wordmarkRef}
               href="/"
-              className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--color-text-primary)] transition-colors duration-[var(--duration-base)] hover:text-[var(--color-accent)]"
+              className="whitespace-nowrap text-xs font-semibold uppercase tracking-[0.14em] text-[var(--color-text-primary)] transition-colors duration-[var(--duration-base)] hover:text-[var(--color-accent)]"
               style={{ fontFamily: "var(--font-mono)" }}
               aria-label="Shalom Ndahiriwe — home"
             >
@@ -180,7 +199,7 @@ export function Navigation() {
           <nav aria-label="Main navigation">
             <ul
               ref={linksRef}
-              className="hidden md:flex items-center gap-8 list-none m-0 p-0"
+              className="hidden lg:flex items-center gap-8 list-none m-0 p-0"
               role="list"
             >
               {NAV_LINKS.map(({ label, href, sectionId }) => {
@@ -196,7 +215,7 @@ export function Navigation() {
                         "after:origin-left after:transition-transform after:duration-[var(--duration-base)]",
                         isActive
                           ? "text-[var(--color-text-primary)] after:scale-x-100 after:bg-[var(--color-accent)]"
-                          : "text-[var(--color-text-muted)] after:scale-x-0 after:bg-[var(--color-accent)] hover:text-[var(--color-text-primary)]"
+                          : "text-[var(--color-text-muted)] after:scale-x-0 after:bg-[var(--color-accent)] hover:text-[var(--color-text-primary)]",
                       )}
                     >
                       {label}
@@ -208,33 +227,43 @@ export function Navigation() {
           </nav>
 
           {/* RIGHT — active label (desktop) + hamburger (mobile) */}
-          <div ref={rightRef} className="flex-1 flex items-center justify-end gap-5">
+          <div
+            ref={rightRef}
+            className="flex-1 flex items-center justify-end gap-5"
+          >
             <span
               className="hidden items-center gap-2 text-[10px] uppercase tracking-[0.18em] lg:flex"
-              style={{ fontFamily: "var(--font-mono)", color: "var(--color-text-muted)" }}
+              style={{
+                fontFamily: "var(--font-mono)",
+                color: "var(--color-text-muted)",
+              }}
             >
-              <span className="op-pulse h-1.5 w-1.5 rounded-full bg-[var(--color-accent)]" aria-hidden="true" />
+              <span
+                className="op-pulse h-1.5 w-1.5 rounded-full bg-[var(--color-accent)]"
+                aria-hidden="true"
+              />
               Available
             </span>
 
             {/* Mobile hamburger */}
             <button
               className={cn(
-                "md:hidden flex items-center justify-center",
+                "lg:hidden flex items-center justify-center",
                 "w-10 h-10 rounded text-[var(--color-text-muted)]",
                 "hover:text-[var(--color-text-primary)]",
                 "transition-colors duration-[var(--duration-base)]",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]",
               )}
               onClick={toggleMobile}
               aria-expanded={mobileOpen}
               aria-controls="mobile-menu"
               aria-label={mobileOpen ? "Close menu" : "Open menu"}
             >
-              {mobileOpen
-                ? <X    className="w-5 h-5" aria-hidden="true" />
-                : <Menu className="w-5 h-5" aria-hidden="true" />
-              }
+              {mobileOpen ? (
+                <X className="w-5 h-5" aria-hidden="true" />
+              ) : (
+                <Menu className="w-5 h-5" aria-hidden="true" />
+              )}
             </button>
           </div>
         </div>
@@ -244,11 +273,13 @@ export function Navigation() {
       <div
         id="mobile-menu"
         className={cn(
-          "fixed inset-0 z-[90] md:hidden",
+          "fixed inset-0 z-[90] lg:hidden",
           "flex flex-col justify-center px-8",
           "bg-[var(--color-bg)]",
           "transition-opacity duration-[var(--duration-base)]",
-          mobileOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+          mobileOpen
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none",
         )}
         aria-hidden={!mobileOpen}
       >
@@ -265,7 +296,7 @@ export function Navigation() {
                     "block text-4xl font-semibold transition-colors duration-[var(--duration-base)]",
                     isActive
                       ? "text-[var(--color-accent)]"
-                      : "text-[var(--color-text-primary)] hover:text-[var(--color-accent)]"
+                      : "text-[var(--color-text-primary)] hover:text-[var(--color-accent)]",
                   )}
                   style={{ fontFamily: "var(--font-display)" }}
                   tabIndex={mobileOpen ? 0 : -1}
@@ -279,9 +310,16 @@ export function Navigation() {
 
         <p
           className="absolute bottom-10 left-8 text-xs tracking-widest uppercase"
-          style={{ fontFamily: "var(--font-mono)", color: "var(--color-text-muted)" }}
+          style={{
+            fontFamily: "var(--font-mono)",
+            color: "var(--color-text-muted)",
+          }}
           aria-hidden="true"
         >
+          <span
+            className="op-pulse mr-2 inline-block h-1.5 w-1.5 rounded-full bg-[var(--color-accent)] align-middle"
+            aria-hidden="true"
+          />
           Available · Web Developer
         </p>
       </div>

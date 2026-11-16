@@ -212,7 +212,7 @@ export function Contact() {
               target={external ? "_blank" : undefined}
               rel={external ? "noopener noreferrer" : undefined}
               className={cn(
-                "rounded-[var(--radius-large)] group flex items-center justify-between",
+                "contact-link rounded-[var(--radius-large)] group flex items-center justify-between",
                 "px-5 py-4",
                 "border border-[rgba(77,163,255,0.24)]",
                 "bg-[var(--color-surface)]",
@@ -221,7 +221,7 @@ export function Contact() {
                 "hover:shadow-[0_0_10px_rgba(77,163,255,0.08)]"
               )}
             >
-              <div className="flex items-center gap-3">
+              <div className="flex min-w-0 items-center gap-3">
                 <div
                   className="w-8 h-8 rounded-[var(--radius-medium)] flex items-center justify-center shrink-0"
                   style={{
@@ -246,7 +246,7 @@ export function Contact() {
                     {label}
                   </span>
                   <span
-                    className="text-sm font-medium"
+                    className="min-w-0 break-words text-sm font-medium"
                     style={{ color: "var(--color-text-primary)" }}
                   >
                     {display}

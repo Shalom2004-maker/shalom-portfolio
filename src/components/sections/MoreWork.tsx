@@ -89,7 +89,7 @@ export function MoreWork() {
           "rounded-[var(--radius-extra-large)] relative overflow-hidden",
           "border border-[rgba(77,163,255,0.28)]",
           "bg-[var(--color-surface)]",
-          "px-6 sm:px-8 md:px-12 py-10 md:py-14",
+          "px-4 sm:px-8 md:px-12 py-10 md:py-14",
           "flex flex-col md:flex-row md:items-center md:justify-between gap-6 md:gap-8"
         )}
       >
@@ -155,7 +155,7 @@ export function MoreWork() {
             rel="noopener noreferrer"
             className={cn(
               "magnetic-button group inline-flex items-center gap-2.5",
-              "h-12 px-8 rounded-full",
+              "h-12 px-5 sm:px-8 rounded-full",
               "text-sm font-semibold tracking-tight",
               "bg-[var(--color-accent)] text-[#07090D]",
               "hover:bg-[#6db8ff]",

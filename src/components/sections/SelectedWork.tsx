@@ -543,8 +543,8 @@ function ProjectPreview({
           src={project.previewImage}
           alt=""
           fill
-          sizes="(min-width: 1280px) 800px, (min-width: 641px) 76vw, 86vw"
-          className="object-cover"
+          sizes="(min-width: 901px) 440px, (min-width: 641px) 400px, (min-width: 560px) 440px, calc(100vw - 120px)"
+          className="object-contain"
         />
       ) : (
         <div className="work-carousel__fallback">
@@ -556,7 +556,11 @@ function ProjectPreview({
               aria-hidden="true"
             />
             <span className="work-carousel__fallback-name">{project.name}</span>
-            <span className="work-carousel__fallback-caption">
+            <span className="work-carousel__fallback-caption inline-flex items-center gap-2">
+              <span
+                className="op-pulse h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-accent)]"
+                aria-hidden="true"
+              />
               Preview pending
             </span>
           </div>

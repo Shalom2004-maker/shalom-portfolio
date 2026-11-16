@@ -74,7 +74,45 @@ const EDUCATION: TimelineEntry[] = [
 export function ExperienceEducation() {
   const reducedMotion = useReducedMotion();
   const sectionRef = useRef<HTMLElement>(null);
+  const timelineRef = useRef<HTMLDivElement>(null);
   const hasAnimated = useRef(false);
+
+  useEffect(() => {
+    const timeline = timelineRef.current;
+    if (reducedMotion || !timeline) return;
+
+    let animationFrame: number | null = null;
+
+    const updateProgress = () => {
+      animationFrame = null;
+      const { top, height } = timeline.getBoundingClientRect();
+      if (height <= 0) return;
+
+      const progress = Math.min(
+        1,
+        Math.max(0, (window.innerHeight - top) / (window.innerHeight + height))
+      );
+      timeline.style.setProperty("--timeline-progress", String(progress));
+    };
+
+    const scheduleUpdate = () => {
+      if (animationFrame === null) {
+        animationFrame = window.requestAnimationFrame(updateProgress);
+      }
+    };
+
+    updateProgress();
+    window.addEventListener("scroll", scheduleUpdate, { passive: true });
+    window.addEventListener("resize", scheduleUpdate);
+
+    return () => {
+      window.removeEventListener("scroll", scheduleUpdate);
+      window.removeEventListener("resize", scheduleUpdate);
+      if (animationFrame !== null) {
+        window.cancelAnimationFrame(animationFrame);
+      }
+    };
+  }, [reducedMotion]);
 
   useEffect(() => {
     if (reducedMotion || !sectionRef.current) return;
@@ -208,7 +246,7 @@ export function ExperienceEducation() {
       </div>
 
       {/* Timeline */}
-      <div className="relative">
+      <div ref={timelineRef} className="experience-timeline relative">
         <section aria-labelledby="experience-records-heading">
           <h3
             id="experience-records-heading"
@@ -252,6 +290,10 @@ export function ExperienceEducation() {
             ))}
           </ol>
         </section>
+
+        <div className="experience-timeline__progress" aria-hidden="true">
+          <div className="experience-timeline__progress-fill" />
+        </div>
       </div>
     </section>
   );
@@ -292,6 +334,7 @@ function TimelineEntry({
         data-tl-node
         className={cn(
           "col-start-1 mt-0.5 flex h-6 w-6 items-center justify-center",
+          "relative z-10",
           education ? "row-start-2 md:row-start-1" : "row-start-1"
         )}
         aria-hidden="true"
