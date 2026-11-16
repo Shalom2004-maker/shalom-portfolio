@@ -1,5 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { useMagneticButton } from "@/hooks/useMagneticButton";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { cn } from "@/lib/cn";
 
 // ─── Nav links (mirror main nav) ─────────────────────────────────────────────
@@ -33,6 +37,8 @@ const SOCIAL_LINKS = [
  * Server component — no interactivity required.
  */
 export function Footer() {
+  const reducedMotion = useReducedMotion();
+  const backToTopRef = useMagneticButton<HTMLAnchorElement>({ enabled: !reducedMotion });
   const year = new Date().getFullYear();
 
   return (
@@ -146,9 +152,10 @@ export function Footer() {
           </p>
 
           <a
+            ref={backToTopRef}
             href="#"
             className={cn(
-              "group inline-flex items-center gap-1.5",
+              "magnetic-button group inline-flex items-center gap-1.5",
               "text-xs transition-colors duration-[var(--duration-base)]",
               "text-[var(--color-text-muted)] hover:text-[var(--color-accent)]"
             )}

@@ -65,14 +65,16 @@ export function Capabilities() {
         />
       </MaskedTextReveal>
 
-      <ul
-        className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 md:grid-cols-4 xl:grid-cols-5"
-        aria-label="Technologies and tools"
-      >
-        {TECHNOLOGIES.map((technology) => (
-          <TechnologyItem key={technology.name} technology={technology} />
-        ))}
-      </ul>
+      <MaskedTextReveal staggerChildren>
+        <ul
+          className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 md:grid-cols-4 xl:grid-cols-5"
+          aria-label="Technologies and tools"
+        >
+          {TECHNOLOGIES.map((technology) => (
+            <TechnologyItem key={technology.name} technology={technology} />
+          ))}
+        </ul>
+      </MaskedTextReveal>
 
       <section
         aria-labelledby="capabilities-learning-heading"
@@ -89,14 +91,16 @@ export function Capabilities() {
         >
           Currently Learning
         </h3>
-        <ul
-          className="grid grid-cols-3 gap-x-4 gap-y-7 sm:gap-x-6"
-          aria-label="Currently learning technologies"
-        >
-          {LEARNING_TECHNOLOGIES.map((technology) => (
-            <TechnologyItem key={technology.name} technology={technology} />
-          ))}
-        </ul>
+        <MaskedTextReveal staggerChildren>
+          <ul
+            className="grid grid-cols-3 gap-x-4 gap-y-7 sm:gap-x-6"
+            aria-label="Currently learning technologies"
+          >
+            {LEARNING_TECHNOLOGIES.map((technology) => (
+              <TechnologyItem key={technology.name} technology={technology} />
+            ))}
+          </ul>
+        </MaskedTextReveal>
       </section>
     </section>
   );
@@ -104,7 +108,7 @@ export function Capabilities() {
 
 function TechnologyItem({ technology }: { technology: Technology }) {
   return (
-    <li className="group min-w-0">
+    <li className="group min-w-0" data-stagger-reveal>
       <div className="flex min-h-[7.5rem] flex-col items-center justify-center gap-3 rounded-[var(--radius-large)] border border-[var(--color-border)] bg-[rgba(13,17,23,0.48)] px-2.5 py-3 text-center transition-colors duration-[var(--duration-base)] hover:border-[rgba(77,163,255,0.28)] hover:bg-[rgba(17,24,32,0.72)]">
         <span className="grid h-14 w-14 shrink-0 place-items-center rounded-[var(--radius-medium)] border border-[var(--color-border)] bg-[rgba(255,255,255,0.025)] transition-colors duration-[var(--duration-base)] group-hover:border-[rgba(77,163,255,0.32)]">
           <Image

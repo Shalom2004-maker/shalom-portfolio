@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { ArrowRight, Mail, ExternalLink, FileText } from "lucide-react";
 import { animate, stagger } from "animejs";
+import { useMagneticButton } from "@/hooks/useMagneticButton";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { cn } from "@/lib/cn";
 
@@ -58,6 +59,7 @@ const CONTACT_LINKS = [
  */
 export function Contact() {
   const reducedMotion = useReducedMotion();
+  const conversationCtaRef = useMagneticButton<HTMLAnchorElement>({ enabled: !reducedMotion });
   const sectionRef = useRef<HTMLElement>(null);
   const hasAnimated = useRef(false);
 
@@ -173,9 +175,10 @@ export function Contact() {
           {/* Primary CTA */}
           <div data-contact-reveal>
             <a
+              ref={conversationCtaRef}
               href="mailto:shalomndahi@gmail.com"
               className={cn(
-                "group inline-flex items-center gap-2.5",
+                "magnetic-button group inline-flex items-center gap-2.5",
                 "h-12 px-8 rounded-full",
                 "text-sm font-semibold tracking-tight",
                 "bg-[var(--color-accent)] text-[#07090D]",

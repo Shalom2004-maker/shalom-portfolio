@@ -277,11 +277,11 @@ code, kbd, samp, pre {
   backface-visibility: hidden;
   will-change: transform, opacity;
   transition:
-    transform 500ms var(--ease-3),
-    opacity 500ms var(--ease-3),
-    filter 500ms var(--ease-3),
-    border-color 500ms var(--ease-3),
-    box-shadow 500ms var(--ease-3);
+    transform 520ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 520ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 520ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 520ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 520ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .work-carousel__slide--active {
@@ -318,27 +318,53 @@ code, kbd, samp, pre {
 }
 
 .work-carousel__information {
+  display: grid;
   width: min(100%, 54rem);
   margin: 0 auto;
-  padding: 0.35rem 1rem 0;
+  padding-top: 0.35rem;
   text-align: center;
 }
 
-.work-carousel__information--slide-in-left {
-  animation: work-information-enter-left 380ms var(--ease-3) both;
+.work-carousel__information-panel {
+  grid-area: 1 / 1;
+  width: min(100%, 54rem);
+  margin: 0 auto;
+  padding-inline: 1rem;
 }
 
-.work-carousel__information--slide-in-right {
-  animation: work-information-enter-right 380ms var(--ease-3) both;
+.work-carousel__information--forward .work-carousel__information-panel--outgoing {
+  animation: work-information-exit-left 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.work-carousel__information--forward .work-carousel__information-panel--incoming {
+  animation: work-information-enter-right 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.work-carousel__information--backward .work-carousel__information-panel--outgoing {
+  animation: work-information-exit-right 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.work-carousel__information--backward .work-carousel__information-panel--incoming {
+  animation: work-information-enter-left 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes work-information-exit-left {
+  from { opacity: 1; transform: translateX(0); }
+  to { opacity: 0; transform: translateX(-28px); }
+}
+
+@keyframes work-information-exit-right {
+  from { opacity: 1; transform: translateX(0); }
+  to { opacity: 0; transform: translateX(28px); }
 }
 
 @keyframes work-information-enter-left {
-  from { opacity: 0; transform: translateX(14px); }
+  from { opacity: 0; transform: translateX(-28px); }
   to { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes work-information-enter-right {
-  from { opacity: 0; transform: translateX(-14px); }
+  from { opacity: 0; transform: translateX(28px); }
   to { opacity: 1; transform: translateX(0); }
 }
 
@@ -520,6 +546,10 @@ code, kbd, samp, pre {
   }
 
   .work-carousel__information {
+    padding-inline: 0;
+  }
+
+  .work-carousel__information-panel {
     padding-inline: 0.25rem;
   }
 
@@ -542,11 +572,13 @@ code, kbd, samp, pre {
     transition: none;
   }
 
-  .work-carousel__information--slide-in-left,
-  .work-carousel__information--slide-in-right {
-    animation: none;
+  .work-carousel__information-panel--outgoing {
+    display: none;
   }
 
+  .work-carousel__information-panel--incoming {
+    animation: none;
+  }
 }
 
 /* ─── Orbital system — signature Hero visualization ─────────────────────────
@@ -778,6 +810,29 @@ code, kbd, samp, pre {
   margin-top: 1.35rem;
 }
 
+.magnetic-button {
+  --magnetic-x: 0px;
+  --magnetic-y: 0px;
+  transform: translate3d(var(--magnetic-x), var(--magnetic-y), 0);
+  transition:
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color var(--duration-base) var(--ease-out-cubic),
+    background-color var(--duration-base) var(--ease-out-cubic),
+    color var(--duration-base) var(--ease-out-cubic),
+    box-shadow var(--duration-base) var(--ease-out-cubic),
+    filter var(--duration-base) var(--ease-out-cubic);
+  will-change: transform, box-shadow, border-color;
+}
+
+.magnetic-button:hover,
+.magnetic-button:focus-visible {
+  border-color: rgba(77, 163, 255, 0.82);
+  box-shadow:
+    0 0 0 1px rgba(77, 163, 255, 0.28),
+    0 0 0 4px rgba(77, 163, 255, 0.08),
+    0 0 24px rgba(77, 163, 255, 0.12);
+}
+
 .hero-cta {
   display: inline-flex;
   min-height: 2.75rem;
@@ -797,7 +852,7 @@ code, kbd, samp, pre {
 }
 
 .hero-cta:hover {
-  transform: translateY(-2px);
+  transform: translateY(-2px) translate3d(var(--magnetic-x), var(--magnetic-y), 0);
 }
 
 .hero-cta-primary {
@@ -819,6 +874,23 @@ code, kbd, samp, pre {
 .hero-cta-secondary:hover {
   border-color: var(--color-accent);
   color: var(--color-accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .magnetic-button,
+  .hero-cta {
+    transform: none !important;
+    transition-duration: 0.01ms !important;
+    box-shadow: none !important;
+  }
+}
+
+@media (pointer: coarse) {
+  .magnetic-button,
+  .hero-cta {
+    transform: none !important;
+    box-shadow: none !important;
+  }
 }
 
 .hero-portrait-stage {

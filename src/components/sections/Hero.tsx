@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { animate, createTimeline, cubicBezier, stagger } from "animejs";
+import { useMagneticButton } from "@/hooks/useMagneticButton";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { HeroMatrix } from "./HeroMatrix";
 
@@ -26,6 +27,8 @@ const MASK_REVEAL_SELECTOR = "[data-hero-mask-reveal]";
 
 export function Hero() {
   const reducedMotion = useReducedMotion();
+  const primaryCtaRef = useMagneticButton<HTMLAnchorElement>({ enabled: !reducedMotion });
+  const secondaryCtaRef = useMagneticButton<HTMLAnchorElement>({ enabled: !reducedMotion });
   const sectionRef = useRef<HTMLElement>(null);
   const orbitRef = useRef<SVGSVGElement>(null);
   const [phraseIndex, setPhraseIndex] = useState(0);
@@ -238,11 +241,16 @@ export function Hero() {
           problems, and exploring the logic behind technology.
         </p>
         <div className="hero-actions" data-hero-reveal>
-          <a className="hero-cta hero-cta-primary" href="#work">
+          <a
+            ref={primaryCtaRef}
+            className="hero-cta hero-cta-primary magnetic-button"
+            href="#work"
+          >
             Explore work
           </a>
           <a
-            className="hero-cta hero-cta-secondary"
+            ref={secondaryCtaRef}
+            className="hero-cta hero-cta-secondary magnetic-button"
             href="https://github.com/Shalom2004-maker"
             target="_blank"
             rel="noopener noreferrer"

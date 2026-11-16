@@ -31,7 +31,12 @@ interface Project {
 }
 
 type SlidePosition = "previous" | "active" | "next";
-type SlideInAnimation = "slide-in-left" | "slide-in-right";
+type TransitionDirection = "forward" | "backward";
+type ProjectTransition = {
+  outgoingIndex: number;
+  incomingIndex: number;
+  direction: TransitionDirection;
+};
 
 const PROJECTS: Project[] = [
   {
@@ -42,6 +47,7 @@ const PROJECTS: Project[] = [
     tags: ["TypeScript", "Supabase"],
     demoUrl: "https://glide-talk-platform.vercel.app/login",
     repoUrl: "https://github.com/Shalom2004-maker/glide-talk-platform",
+    previewImage: "/images/letchat.jpg",
     featured: true,
   },
   {
@@ -70,6 +76,7 @@ const PROJECTS: Project[] = [
     tags: ["PHP", "MySQL", "HTML/CSS"],
     demoUrl: "https://github.com/Shalom2004-maker/NexGen-Solution",
     repoUrl: "https://github.com/Shalom2004-maker/NexGen-Solution",
+    previewImage: "/images/nexgen-solution.png",
   },
 ];
 
@@ -86,12 +93,13 @@ export function SelectedWork() {
   const sectionRef = useRef<HTMLElement>(null);
   const hasAnimated = useRef(false);
   const touchStart = useRef<{ x: number; y: number } | null>(null);
+  const isTransitioning = useRef(false);
+  const transitionTimeout = useRef<number | null>(null);
   const initialProjectIndex = PROJECTS.findIndex((project) => project.featured);
   const [activeIndex, setActiveIndex] = useState(
     initialProjectIndex >= 0 ? initialProjectIndex : 0
   );
-  const [slideInAnimation, setSlideInAnimation] =
-    useState<SlideInAnimation | null>(null);
+  const [transition, setTransition] = useState<ProjectTransition | null>(null);
   const activeProject = PROJECTS[activeIndex];
   const previousIndex = (activeIndex - 1 + PROJECTS.length) % PROJECTS.length;
   const nextIndex = (activeIndex + 1) % PROJECTS.length;
@@ -117,13 +125,36 @@ export function SelectedWork() {
     },
   ];
 
+  const startTransition = (nextIndex: number, direction: TransitionDirection) => {
+    if (isTransitioning.current || nextIndex === activeIndex) return;
+
+    if (reducedMotion) {
+      setActiveIndex(nextIndex);
+      return;
+    }
+
+    isTransitioning.current = true;
+    setTransition({
+      outgoingIndex: activeIndex,
+      incomingIndex: nextIndex,
+      direction,
+    });
+    setActiveIndex(nextIndex);
+    transitionTimeout.current = window.setTimeout(() => {
+      isTransitioning.current = false;
+      transitionTimeout.current = null;
+      setTransition(null);
+    }, 540);
+  };
+
   const showPrevious = () => {
-    setSlideInAnimation("slide-in-right");
-    setActiveIndex((index) => (index - 1 + PROJECTS.length) % PROJECTS.length);
+    startTransition(
+      (activeIndex - 1 + PROJECTS.length) % PROJECTS.length,
+      "backward"
+    );
   };
   const showNext = () => {
-    setSlideInAnimation("slide-in-left");
-    setActiveIndex((index) => (index + 1) % PROJECTS.length);
+    startTransition((activeIndex + 1) % PROJECTS.length, "forward");
   };
 
   // ── Scroll-triggered entrance ──────────────────────────────────────────────
@@ -232,10 +263,19 @@ export function SelectedWork() {
     };
   }, [reducedMotion]);
 
+  useEffect(
+    () => () => {
+      if (transitionTimeout.current !== null) {
+        window.clearTimeout(transitionTimeout.current);
+      }
+    },
+    []
+  );
+
   const handleCarouselKeyDown = (
     event: React.KeyboardEvent<HTMLDivElement>
   ) => {
-    if (event.target !== event.currentTarget) return;
+    if (event.target !== event.currentTarget || isTransitioning.current) return;
 
     if (event.key === "ArrowLeft") {
       event.preventDefault();
@@ -247,7 +287,7 @@ export function SelectedWork() {
   };
 
   const handleTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
-    if (event.touches.length !== 1) {
+    if (isTransitioning.current || event.touches.length !== 1) {
       touchStart.current = null;
       return;
     }
@@ -319,32 +359,28 @@ export function SelectedWork() {
         </div>
 
         <div
-          key={activeProject.id}
           className={cn(
             "work-carousel__information",
-            slideInAnimation &&
-              `work-carousel__information--${slideInAnimation}`
+            transition && `work-carousel__information--${transition.direction}`
           )}
         >
-          <div className="work-carousel__information-heading">
-            <h3>{activeProject.name}</h3>
-            <TagList tags={activeProject.tags} />
-          </div>
-
-          <p>{activeProject.description}</p>
-
-          <div className="work-carousel__actions">
-            <ProjectLink
-              href={activeProject.demoUrl}
-              primary
-              label="Explore Project"
+          {transition ? (
+            <>
+              <ProjectInformation
+                project={PROJECTS[transition.outgoingIndex]}
+                state="outgoing"
+              />
+              <ProjectInformation
+                project={PROJECTS[transition.incomingIndex]}
+                state="incoming"
+              />
+            </>
+          ) : (
+            <ProjectInformation
+              project={activeProject}
+              state="active"
             />
-            <ProjectLink
-              href={activeProject.repoUrl}
-              label="Repository"
-              icon={<ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />}
-            />
-          </div>
+          )}
         </div>
 
         <p className="sr-only" aria-live="polite" aria-atomic="true">
@@ -356,6 +392,7 @@ export function SelectedWork() {
             type="button"
             onClick={showPrevious}
             className="work-carousel__control"
+            aria-disabled={Boolean(transition)}
             aria-label={`Previous project: ${PROJECTS[previousIndex].name}`}
           >
             <ChevronLeft className="h-5 w-5" aria-hidden="true" />
@@ -371,22 +408,23 @@ export function SelectedWork() {
                 key={project.id}
                 type="button"
                 onClick={() => {
-                  if (index === activeIndex) return;
+                  if (transition) return;
                   const forwardDistance =
                     (index - activeIndex + PROJECTS.length) % PROJECTS.length;
                   const backwardDistance =
                     (activeIndex - index + PROJECTS.length) % PROJECTS.length;
-                  setSlideInAnimation(
+                  startTransition(
+                    index,
                     forwardDistance <= backwardDistance
-                      ? "slide-in-left"
-                      : "slide-in-right"
+                      ? "forward"
+                      : "backward"
                   );
-                  setActiveIndex(index);
                 }}
                 className={cn(
                   "work-carousel__indicator",
                   index === activeIndex && "work-carousel__indicator--active"
                 )}
+                aria-disabled={Boolean(transition)}
                 aria-label={`Show project ${index + 1}: ${project.name}`}
                 aria-pressed={index === activeIndex}
               />
@@ -406,6 +444,7 @@ export function SelectedWork() {
             type="button"
             onClick={showNext}
             className="work-carousel__control"
+            aria-disabled={Boolean(transition)}
             aria-label={`Next project: ${PROJECTS[nextIndex].name}`}
           >
             <ChevronRight className="h-5 w-5" aria-hidden="true" />
@@ -445,6 +484,47 @@ function ProjectCard({
     >
       <ProjectPreview project={project} />
     </article>
+  );
+}
+
+function ProjectInformation({
+  project,
+  state,
+}: {
+  project: Project;
+  state: "active" | "outgoing" | "incoming";
+}) {
+  const isOutgoing = state === "outgoing";
+
+  return (
+    <div
+      className={cn(
+        "work-carousel__information-panel",
+        `work-carousel__information-panel--${state}`
+      )}
+      aria-hidden={isOutgoing}
+      inert={isOutgoing}
+    >
+      <div className="work-carousel__information-heading">
+        <h3>{project.name}</h3>
+        <TagList tags={project.tags} />
+      </div>
+
+      <p>{project.description}</p>
+
+      <div className="work-carousel__actions">
+        <ProjectLink
+          href={project.demoUrl}
+          primary
+          label="Explore Project"
+        />
+        <ProjectLink
+          href={project.repoUrl}
+          label="Repository"
+          icon={<ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />}
+        />
+      </div>
+    </div>
   );
 }
 

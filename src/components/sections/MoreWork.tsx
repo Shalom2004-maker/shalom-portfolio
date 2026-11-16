@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { ArrowRight, GitBranch } from "lucide-react";
 import { animate } from "animejs";
+import { useMagneticButton } from "@/hooks/useMagneticButton";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { cn } from "@/lib/cn";
 
@@ -18,6 +19,7 @@ import { cn } from "@/lib/cn";
  */
 export function MoreWork() {
   const reducedMotion = useReducedMotion();
+  const githubCtaRef = useMagneticButton<HTMLAnchorElement>({ enabled: !reducedMotion });
   const sectionRef = useRef<HTMLElement>(null);
   const hasAnimated = useRef(false);
 
@@ -147,11 +149,12 @@ export function MoreWork() {
         {/* CTA */}
         <div data-more-reveal className="relative shrink-0">
           <a
+            ref={githubCtaRef}
             href="https://github.com/Shalom2004-maker"
             target="_blank"
             rel="noopener noreferrer"
             className={cn(
-              "group inline-flex items-center gap-2.5",
+              "magnetic-button group inline-flex items-center gap-2.5",
               "h-12 px-8 rounded-full",
               "text-sm font-semibold tracking-tight",
               "bg-[var(--color-accent)] text-[#07090D]",
